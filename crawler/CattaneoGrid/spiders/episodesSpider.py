@@ -87,7 +87,6 @@ class BasePodcastSpider(scrapy.Spider):
                 and str(episode_id) in self.existing_episodes
                 and str(episode_id) not in self.gap_episodes
             ):
-                logger.debug("Skipping known non-gap episode %s", episode_id)
                 continue
 
             item = CattaneogridItem()
@@ -169,19 +168,30 @@ class BasePodcastSpider(scrapy.Spider):
             logger.error("TimeoutError on %s", request.url)
 
     def extract_date(self, title):
-        date_match = re.search(
+        # ISO format: "- 2024-05-18"
+        m = re.search(r"\b(\d{4}-\d{2}-\d{2})\b", title or "")
+        if m:
+            return m.group(1)
+        # Long/short month name: "Dec 27 2025", "December 27 2025"
+        m = re.search(
             r"(\bJanuary\b|\bFebruary\b|\bMarch\b|\bApril\b|\bMay\b|\bJune\b|\bJuly\b|\bAugust\b|\bSeptember\b|\bOctober\b|\bNovember\b|\bDecember\b|\bJan\b|\bFeb\b|\bMar\b|\bApr\b|\bMay\b|\bJun\b|\bJul\b|\bAug\b|\bSep\b|\bOct\b|\bNov\b|\bDec\b)\s\d{1,2}(st|nd|rd|th)?\s\d{4}",
             title,
             re.IGNORECASE,
         )
-        if date_match:
-            date_str = date_match.group()
-            return parse(date_str).strftime("%Y-%m-%d")
+        if m:
+            return parse(m.group()).strftime("%Y-%m-%d")
         return None
 
     def extract_episode(self, title):
-        episode_match = re.search(r"Episode\s(\d+)", title or "")
-        return episode_match.group(1) if episode_match else None
+        # Standard format: "Resident / Episode 764 / Dec 27 2025"
+        m = re.search(r"Episode\s(\d+)", title or "")
+        if m:
+            return m.group(1)
+        # Alternate format: "680 Hernan Cattaneo podcast - 2024-05-18"
+        m = re.match(r"^(\d+)\s+Hernan\s+Cattaneo", title or "", re.IGNORECASE)
+        if m:
+            return m.group(1)
+        return None
 
     def html_to_text(self, html, return_html):
         if return_html:
