@@ -1,0 +1,9 @@
+@if (currentContent) {
+  <div>
+    <!-- <h2>Now Playing: {{ currentContent.title }}</h2> -->
+    <audio #audioPlayer controls (timeupdate)="onTimeUpdate()" (ended)="onAudioEnded()">
+      <source [src]="currentContent.link" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+}

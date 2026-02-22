@@ -1,0 +1,28 @@
+<div class="episode-grid">
+
+  <div>
+    <label for="orderby">Ordenar:</label>
+    <select id="orderby" (change)="onSortChange($event)">
+      @for (option of sortOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </div>
+
+  @for (episode of episodes; track episode; let i = $index) {
+    <div
+      [ngStyle]="{'background-color': episode[selectedSortField]?.color }"
+      class="episode-item" (click)="onEpisodeClick(i)">
+      <div class="episodio">{{ episode.episodio }}</div>
+    </div>
+    @if (selectedIndex === i) {
+      <div class="episode-detail-row"
+        [ngStyle]="{'background-color': episode[selectedSortField]?.color}">
+        <div class="titulo">{{ episode.titulo }}</div>
+        <div class="likes">Likes: {{ episode.likes }}</div>
+        <div class="descargas">Descargas: {{ episode.descargas }}</div>
+        <div [innerHTML]="tracklistWithBreaks(episode.tracklist)" class="tracklist"></div>
+      </div>
+    }
+  }
+</div>
