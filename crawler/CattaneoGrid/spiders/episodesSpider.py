@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 import scrapy
 from bs4 import BeautifulSoup
 from dateutil.parser import parse
-from scrapy.exceptions import CloseSpider
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError, TimeoutError, TCPTimedOutError
 
@@ -23,23 +22,19 @@ class BasePodcastSpider(scrapy.Spider):
     name = None
     allowed_domains = ["podcast.hernancattaneo.com"]
     start_page = 0
-    last_page = 68
+    last_page = 80  # Extended from 68 to potentially capture older episodes (1–94)
     resume_mode = False
 
-    def __init__(self, order="desc", return_html="false", resume_from=None, **kwargs):
+    def __init__(self, order="desc", return_html="false", **kwargs):
         super().__init__(**kwargs)
         self.ascending = str(order).lower() in {"asc", "ascending", "oldest", "old"}
         self.return_html = str(return_html).lower() in {"1", "true", "t", "yes", "y", "on"}
-        self.manual_resume = str(resume_from) if resume_from not in (None, "", "None") else None
-        self.resume_boundary = None
+        self.existing_episodes: set[str] = set()  # episode IDs already in db
+        self.gap_episodes: set[str] = set()       # missing numeric IDs to fill
 
     def start_requests(self):
         if self.resume_mode:
-            self.resume_boundary = self.manual_resume or self._derive_resume_boundary()
-            if self.resume_boundary:
-                self.logger.info("Resume boundary set to episode %s", self.resume_boundary)
-            else:
-                self.logger.info("No resume boundary found; crawling full catalogue.")
+            self._load_existing_and_gaps()
 
         pages = range(self.start_page, self.last_page + 1)
         if self.ascending:
@@ -49,11 +44,51 @@ class BasePodcastSpider(scrapy.Spider):
         for page_number in pages:
             yield scrapy.Request(url=f"{base_url}{page_number}/", callback=self.parse)
 
+    def _load_existing_and_gaps(self):
+        """Load existing episode IDs and compute gap set for gap-filling mode."""
+        output_path = self._output_path()
+        if not output_path.exists():
+            return
+        try:
+            records = json.loads(output_path.read_text(encoding="utf-8"))
+            for r in records:
+                ep = r.get("episodio")
+                if ep is not None:
+                    self.existing_episodes.add(str(ep))
+
+            numeric_ids = {int(ep) for ep in self.existing_episodes if str(ep).isdigit()}
+            if numeric_ids:
+                max_ep = max(numeric_ids)
+                self.gap_episodes = {
+                    str(i) for i in range(1, max_ep + 1) if i not in numeric_ids
+                }
+                if self.gap_episodes:
+                    self.logger.info(
+                        "Gap-fill: %d missing episodes in range 1–%d will be captured if found.",
+                        len(self.gap_episodes),
+                        max_ep,
+                    )
+        except Exception:
+            self.logger.warning(
+                "Unable to load existing data for gap analysis.", exc_info=True
+            )
+
     def parse(self, response):
         for card in response.css(".card"):
             download_page_link = card.css('a.bg-transparent[title="Download"]::attr(href)').get()
             titulo = card.css(".card-body .card-title a::text").get()
             episode_id = self.extract_episode(titulo)
+
+            # In resume mode, skip download-page requests for episodes already in the
+            # database that are not gap candidates — avoids hundreds of redundant requests.
+            if (
+                self.resume_mode
+                and episode_id is not None
+                and str(episode_id) in self.existing_episodes
+                and str(episode_id) not in self.gap_episodes
+            ):
+                logger.debug("Skipping known non-gap episode %s", episode_id)
+                continue
 
             item = CattaneogridItem()
             item["episodio"] = episode_id
@@ -104,11 +139,22 @@ class BasePodcastSpider(scrapy.Spider):
             logger.warning("Unable to find download link for episode %s (%s)", item.get("episodio"), response.url)
 
         episodio = item.get("episodio")
-        if self.resume_mode and self.resume_boundary and episodio == self.resume_boundary:
-            logger.info("Resume boundary reached at episode %s; stopping crawl.", episodio)
-            raise CloseSpider("resume_complete")
 
-        yield item
+        if self.resume_mode:
+            ep_str = str(episodio) if episodio is not None else None
+
+            if ep_str is None:
+                # Unknown ID — yield for pipeline to handle deduplication by title
+                yield item
+            elif ep_str not in self.existing_episodes:
+                logger.info("New episode %s — adding to database.", ep_str)
+                yield item
+            elif ep_str in self.gap_episodes:
+                logger.info("Gap episode %s filled.", ep_str)
+                yield item
+            # else: known non-gap episode — already filtered in parse(); skip silently
+        else:
+            yield item
 
     def errback_httpbin(self, failure):
         logger.error(repr(failure))
@@ -147,24 +193,12 @@ class BasePodcastSpider(scrapy.Spider):
         description_text = re.sub(" +", " ", description_text)
         return description_text
 
-    def _derive_resume_boundary(self):
-        output_path = self._output_path()
-        if not output_path.exists():
-            return None
-        try:
-            records = json.loads(output_path.read_text(encoding="utf-8"))
-            if records:
-                return records[0].get("episodio")
-        except Exception:
-            self.logger.warning("Unable to read existing output file %s", output_path, exc_info=True)
-        return None
-
     def _output_path(self):
         return Path(self.settings.get("OUTPUT_JSON_PATH", "output/db.json"))
 
 
 class PodcastSpider(BasePodcastSpider):
-    """Default incremental crawl (resume until encountering existing episodes)."""
+    """Default incremental crawl: fetches new episodes and fills any known gaps."""
 
     name = "podcastspider"
     resume_mode = True
