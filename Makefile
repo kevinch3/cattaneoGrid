@@ -1,6 +1,10 @@
 SHELL := /bin/bash
 
-.PHONY: crawl crawl-full build deploy
+.PHONY: install crawl crawl-full build deploy
+
+## Set up Python venv for the crawler
+install:
+	cd crawler && make install
 
 ## Run incremental crawl → writes data/db.json
 crawl:

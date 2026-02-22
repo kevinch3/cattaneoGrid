@@ -26,6 +26,9 @@ crawler/ → data/db.json (committed) → app/src/assets/db.json (CI copy) → A
 **Prerequisites:** Python 3.12+, Node 22+
 
 ```bash
+# First-time setup: create crawler venv and install Python deps
+make install
+
 # Crawl (incremental) → updates data/db.json
 make crawl
 

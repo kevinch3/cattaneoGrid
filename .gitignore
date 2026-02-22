@@ -17,6 +17,11 @@ app/dist/
 # db.json is generated at build time by copying from data/db.json
 app/src/assets/db.json
 
+# ── Data ──────────────────────────────────────────────────────────────────────
+# Transient crawler artifacts (db.json.tmp is renamed to db.json on success)
+data/*.tmp
+data/*.json.*
+
 # ── Common ────────────────────────────────────────────────────────────────────
 .env
 ._*
