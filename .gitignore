@@ -1,0 +1,25 @@
+# ── Crawler ───────────────────────────────────────────────────────────────────
+crawler/env/
+crawler/venv/
+crawler/ENV/
+crawler/output/
+crawler/**/__pycache__/
+crawler/**/*.py[cod]
+crawler/**/*.so
+crawler/.scrapy/
+crawler/.idea/
+crawler/.vscode/
+crawler/side_projects/media_downloader/downloaded/
+
+# ── App ───────────────────────────────────────────────────────────────────────
+app/node_modules/
+app/dist/
+# db.json is generated at build time by copying from data/db.json
+app/src/assets/db.json
+
+# ── Common ────────────────────────────────────────────────────────────────────
+.env
+._*
+.DS_Store
+Thumbs.db
+ehthumbs.db
