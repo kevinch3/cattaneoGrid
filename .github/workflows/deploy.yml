@@ -1,0 +1,49 @@
+name: Deploy App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/src/**'
+      - 'app/angular.json'
+      - 'app/package.json'
+      - 'app/package-lock.json'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: app
+        run: npm ci
+
+      - name: Copy db.json to assets
+        run: cp data/db.json app/src/assets/db.json
+
+      - name: Build
+        working-directory: app
+        run: npm run prerender:gh
+
+      - name: Deploy to GitHub Pages
+        working-directory: app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          npx angular-cli-ghpages --dir=dist/cattaneo-grid-app/browser --branch=gh-pages
