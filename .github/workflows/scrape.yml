@@ -28,8 +28,6 @@ jobs:
 
       - name: Run crawler
         working-directory: crawler
-        env:
-          SCRAPY_SETTINGS_MODULE: CattaneoGrid.settings
         run: scrapy crawl podcastspider
 
       - name: Commit updated db.json
