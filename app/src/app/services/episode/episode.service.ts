@@ -1,55 +1,52 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { Episode, EpisodeExtended, EpisodeSort } from '../../models/episode.model'
-import { scaleLinear, ScaleLinear } from 'd3-scale';
+import { Observable, of } from 'rxjs';
+import { Episode, EpisodeExtended, EpisodeSort } from '../../models/episode.model';
+import rawEpisodes from '../../../assets/db.json';
+
+type ColorScale = ((value: number) => string) | null;
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class EpisodesService {
-  constructor(private httpClient: HttpClient) {}
 
   public fetchEpisodes(): Observable<EpisodeSort[]> {
-    const dataPath = 'assets/db.json';
+    const episodes = rawEpisodes as unknown as Episode[];
 
-    return this.httpClient.get<Episode[]>(dataPath).pipe(
-      map(episodes => {
-        const likesValues = episodes.map(episode => this.parseIntegerField(episode.likes));
-        const descargasValues = episodes.map(episode => this.parseDescargas(episode.descargas));
-        const fechaValues = episodes.map(episode => this.parseDateField(episode.fecha));
-        const fechaSubidaValues = episodes.map(episode => this.parseDateField(episode.fechasubida));
-        const episodioValues = episodes.map(episode => this.parseIntegerField(episode.episodio));
+    const likesValues = episodes.map(episode => this.parseIntegerField(episode.likes));
+    const descargasValues = episodes.map(episode => this.parseDescargas(episode.descargas));
+    const fechaValues = episodes.map(episode => this.parseDateField(episode.fecha));
+    const fechaSubidaValues = episodes.map(episode => this.parseDateField(episode.fechasubida));
+    const episodioValues = episodes.map(episode => this.parseIntegerField(episode.episodio));
 
-        const colorScaleLikes = this.createColorScale(this.getMaxValue(likesValues));
-        const colorScaleDescargas = this.createColorScale(this.getMaxValue(descargasValues));
-        const colorScaleFecha = this.createColorScale(this.getMaxValue(fechaValues));
-        const colorScaleFechasubida = this.createColorScale(this.getMaxValue(fechaSubidaValues));
-        const colorScaleEpisodio = this.createColorScale(this.getMaxValue(episodioValues), 1);
+    const colorScaleLikes = this.createColorScale(this.getMaxValue(likesValues));
+    const colorScaleDescargas = this.createColorScale(this.getMaxValue(descargasValues));
+    const colorScaleFecha = this.createColorScale(this.getMaxValue(fechaValues));
+    const colorScaleFechasubida = this.createColorScale(this.getMaxValue(fechaSubidaValues));
+    const colorScaleEpisodio = this.createColorScale(this.getMaxValue(episodioValues), 1);
 
-        return episodes.map(episode =>
-          this.convertToEpisodeSort(
-            episode,
-            colorScaleLikes,
-            colorScaleDescargas,
-            colorScaleFecha,
-            colorScaleFechasubida,
-            colorScaleEpisodio
-          )
-        );
-      })
+    return of(
+      episodes.map(episode =>
+        this.convertToEpisodeSort(
+          episode,
+          colorScaleLikes,
+          colorScaleDescargas,
+          colorScaleFecha,
+          colorScaleFechasubida,
+          colorScaleEpisodio
+        )
+      )
     );
   }
 
 
   private convertToEpisodeSort(
     episode: Episode,
-    colorScaleLikes: ScaleLinear<string, string> | null,
-    colorScaleDescargas: ScaleLinear<string, string> | null,
-    colorScaleFecha: ScaleLinear<string, string> | null,
-    colorScaleFechasubida: ScaleLinear<string, string> | null,
-    colorScaleEpisodio: ScaleLinear<string, string> | null
+    colorScaleLikes: ColorScale,
+    colorScaleDescargas: ColorScale,
+    colorScaleFecha: ColorScale,
+    colorScaleFechasubida: ColorScale,
+    colorScaleEpisodio: ColorScale
   ): EpisodeSort {
     const likesNumber = this.parseIntegerField(episode.likes);
     const descargasNumber = this.parseDescargas(episode.descargas);
@@ -57,7 +54,7 @@ export class EpisodesService {
     const fechasubidaTimestamp = this.parseDateField(episode.fechasubida);
     const episodioNumber = this.parseIntegerField(episode.episodio);
     const tracklist = episode.tracklist ?? episode.descripcion ?? '';
-    
+
     return {
       ...episode,
       tracklist,
@@ -130,24 +127,34 @@ export class EpisodesService {
   }
 
   private getMaxValue(values: Array<number | null>): number | null {
-    const validValues = values.filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
-    return validValues.length ? Math.max(...validValues) : null;
+    let max: number | null = null;
+    for (const v of values) {
+      if (typeof v === 'number' && Number.isFinite(v) && (max === null || v > max)) {
+        max = v;
+      }
+    }
+    return max;
   }
 
-  private createColorScale(maxValue: number | null, domainStart: number = 0): ScaleLinear<string, string> | null {
+  // Linear interpolation from CSS green (#008000 = rgb(0,128,0)) to red (#ff0000 = rgb(255,0,0))
+  private createColorScale(maxValue: number | null, domainStart: number = 0): ColorScale {
     if (maxValue === null) {
       return null;
     }
-
-    const start = Math.min(domainStart, maxValue);
-    return scaleLinear<string>().domain([start, maxValue]).range(['green', 'red']);
+    const min = Math.min(domainStart, maxValue);
+    const range = maxValue - min;
+    return (value: number) => {
+      const t = range > 0 ? (value - min) / range : 0;
+      const r = Math.round(255 * t);
+      const g = Math.round(128 * (1 - t));
+      return `rgb(${r},${g},0)`;
+    };
   }
 
-  private resolveColor(scale: ScaleLinear<string, string> | null, value: number | null): string {
+  private resolveColor(scale: ColorScale, value: number | null): string {
     if (!scale || value === null) {
       return 'grey';
     }
-
     return scale(value);
   }
 }

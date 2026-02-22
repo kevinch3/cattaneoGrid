@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { PlayerService } from '../../services/player/player.service'
 import { EpisodeExtended, EpisodeSort } from '../../models/episode.model'
 import { PlayableContent } from '../../models/playable.model'
@@ -9,7 +8,7 @@ import { EpisodesService } from '../../services/episode/episode.service'
 
 @Component({
     selector: 'app-episodes-grid',
-    imports: [CommonModule],
+    imports: [],
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './episodes-grid.component.html',
     styleUrl: './episodes-grid.component.scss'

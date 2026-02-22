@@ -11,13 +11,13 @@
 
   @for (episode of episodes; track episode; let i = $index) {
     <div
-      [ngStyle]="{'background-color': episode[selectedSortField]?.color }"
+      [style.background-color]="episode[selectedSortField]?.color"
       class="episode-item" (click)="onEpisodeClick(i)">
       <div class="episodio">{{ episode.episodio }}</div>
     </div>
     @if (selectedIndex === i) {
       <div #detailRow class="episode-detail-row"
-        [ngStyle]="{'background-color': episode[selectedSortField]?.color}">
+        [style.background-color]="episode[selectedSortField]?.color">
         <div class="titulo">{{ episode.titulo }}</div>
         <div class="likes">Likes: {{ episode.likes }}</div>
         <div class="descargas">Descargas: {{ episode.descargas }}</div>
