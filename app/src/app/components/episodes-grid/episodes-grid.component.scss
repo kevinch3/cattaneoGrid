@@ -26,9 +26,12 @@
 .episode-detail-row {
     grid-column: 1 / -1;
     transition: all 0.3s ease;
-    padding: 30px 15px;
+    padding: 60px 30px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
     .titulo{
         font-size: 2em;
         font-weight: 600;
     }
-  }
+}

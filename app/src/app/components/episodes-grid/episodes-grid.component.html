@@ -16,7 +16,7 @@
       <div class="episodio">{{ episode.episodio }}</div>
     </div>
     @if (selectedIndex === i) {
-      <div class="episode-detail-row"
+      <div #detailRow class="episode-detail-row"
         [ngStyle]="{'background-color': episode[selectedSortField]?.color}">
         <div class="titulo">{{ episode.titulo }}</div>
         <div class="likes">Likes: {{ episode.likes }}</div>

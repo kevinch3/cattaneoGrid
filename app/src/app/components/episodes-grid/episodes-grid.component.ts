@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { PlayerService } from '../../services/player/player.service'
 import { EpisodeExtended, EpisodeSort } from '../../models/episode.model'
@@ -27,7 +27,8 @@ export class EpisodesGridComponent implements OnInit {
 
   constructor(
     private playerService: PlayerService,
-    private episodesService: EpisodesService
+    private episodesService: EpisodesService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -45,6 +46,7 @@ export class EpisodesGridComponent implements OnInit {
             ];
           }
           this.sortEpisodes(this.selectedSortField);
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Error fetching episodes:', error);
@@ -69,6 +71,12 @@ public onSortChange(event: Event): void {
       link: episode.link ?? '',
       id: episode.episodio ?? ''
     })
+
+    if (this.selectedIndex !== null) {
+      setTimeout(() => {
+        document.querySelector('.episode-detail-row')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
   }
 
   public playContent(content: PlayableContent) {
