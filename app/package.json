@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "prerender:gh": "ng build --configuration production --base-href=/cattaneoGrid/",
+    "prerender:gh": "ng build --configuration production --base-href=/",
     "deploy:gh": "npm run prerender:gh && npx angular-cli-ghpages --dir=dist/cattaneo-grid-app/browser --branch=gh-pages"
   },
   "private": true,
