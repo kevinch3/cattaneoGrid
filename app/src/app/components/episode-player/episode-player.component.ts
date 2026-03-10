@@ -6,6 +6,7 @@ import { PlayableContent, PlayerState } from '../../models/playable.model'
 
 @Component({
   selector: 'app-episode-player',
+  standalone: true,
   templateUrl: './episode-player.component.html',
   styleUrl: './episode-player.component.scss'
 })

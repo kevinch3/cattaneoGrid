@@ -1,7 +1,7 @@
 <!-- app/src/app/components/episodes-grid/episodes-grid.component.html -->
 <div class="episode-grid" [class.sorting]="animatingSort">
 
-  @for (episode of episodes; track episode; let i = $index) {
+  @for (episode of episodes; track episode.episodio; let i = $index) {
     <div
       [style.background-color]="episode[sort.selectedField()]?.color"
       [style.animation-delay]="animatingSort ? (i * 70) + 'ms' : '0ms'"
