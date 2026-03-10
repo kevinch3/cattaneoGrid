@@ -79,27 +79,29 @@ class BasePodcastSpider(scrapy.Spider):
             titulo = card.css(".card-body .card-title a::text").get()
             episode_id = self.extract_episode(titulo)
 
-            # In resume mode, skip download-page requests for episodes already in the
-            # database that are not gap candidates — avoids hundreds of redundant requests.
+            item = CattaneogridItem()
+            item["episodio"] = episode_id
+            item["titulo"] = titulo
+            item["likes"] = card.css('button[title="Likes"] span:last-child::text').get()
+            item["descargas"] = card.css('a.bg-transparent[title="Download"] span:last-child::text').get()
+            item["fecha"] = self.extract_date(titulo)
+
+            # In resume mode, yield known non-gap episodes as stats-only items so the
+            # pipeline can refresh likes/descargas without touching other fields.
             if (
                 self.resume_mode
                 and episode_id is not None
                 and str(episode_id) in self.existing_episodes
                 and str(episode_id) not in self.gap_episodes
             ):
+                item["stats_only"] = True
+                yield item
                 continue
-
-            item = CattaneogridItem()
-            item["episodio"] = episode_id
-            item["titulo"] = titulo
 
             text_fragments = card.css(".episode-description").getall()
             item["descripcion"] = (
                 None if not text_fragments else self.html_to_text(" ".join(text_fragments).strip(), self.return_html)
             )
-            item["likes"] = card.css('button[title="Likes"] span:last-child::text').get()
-            item["descargas"] = card.css('a.bg-transparent[title="Download"] span:last-child::text').get()
-            item["fecha"] = self.extract_date(titulo)
 
             if download_page_link:
                 logger.info("Download page found for %s: %s", episode_id, download_page_link)

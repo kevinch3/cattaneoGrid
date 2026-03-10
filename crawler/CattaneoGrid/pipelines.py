@@ -44,6 +44,7 @@ class JsonArrayWriterPipeline:
         self.written_titles: set[str] = set()     # titles written this run
         self.used_letter_ids: set[str] = set()    # existing + newly assigned letter IDs
         self.existing_by_title: dict[str, object] = {}  # title → episodio for existing items
+        self.stats_updates: dict[str, dict] = {}  # episodio → {likes, descargas} from stats refresh
 
         if not self.resume_mode and self.output_path.exists():
             timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")
@@ -103,6 +104,13 @@ class JsonArrayWriterPipeline:
         adapter = ItemAdapter(item)
         data = adapter.asdict()
 
+        if data.get("stats_only"):
+            ep_str = str(data["episodio"])
+            update = {k: data[k] for k in ("likes", "descargas") if data.get(k) is not None}
+            if update:
+                self.stats_updates[ep_str] = update
+            raise DropItem(f"Stats refresh for existing episode {ep_str!r}")
+
         episodio = data.get("episodio")
         titulo = data.get("titulo")
 
@@ -157,6 +165,8 @@ class JsonArrayWriterPipeline:
                 # Skip if already written by title this run (covers null-episodio items)
                 if titulo and titulo in self.written_titles:
                     continue
+                if ep_str and ep_str in self.stats_updates:
+                    entry = {**entry, **self.stats_updates[ep_str]}
                 self._append_existing(entry)
 
         self.file.write("]\n")
