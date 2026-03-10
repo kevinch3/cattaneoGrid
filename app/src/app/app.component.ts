@@ -1,16 +1,14 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core'
+import { RouterOutlet } from '@angular/router'
+import { HeaderComponent } from './components/header/header.component'
+import { FooterComponent } from './components/footer/footer.component'
 import { EpisodePlayerComponent } from './components/episode-player/episode-player.component'
 
 @Component({
-    selector: 'app-root',
-    imports: [
-    RouterOutlet,
-    EpisodePlayerComponent
-],
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, FooterComponent, EpisodePlayerComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'cattaneoGridApp';
-}
+export class AppComponent {}

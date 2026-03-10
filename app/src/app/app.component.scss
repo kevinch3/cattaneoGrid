@@ -1,20 +1,15 @@
 .app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    max-height: -webkit-fill-available; // Para manejar el viewport en iOS
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: -webkit-fill-available;
+  background: var(--bg, #fff);
+}
 
-    header {
-        height: 72px;
-        display: none;
-    }
-
-    content {
-        flex-grow: 1;
-        overflow-y: auto;
-    }
-
-    footer {
-        height: auto;
-    }
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  // Bottom padding prevents last grid row from hiding behind floating player.
+  // 80px player height + 20px gap + 32px footer + 12px extra breathing room.
+  padding-bottom: calc(80px + 20px + 32px + 12px);
 }

@@ -1,14 +1,12 @@
 <div class="app-container">
+  <app-header></app-header>
 
-    <header>
-        header
-    </header>
-    <content>
-        <router-outlet></router-outlet>
-    </content>
-    <footer>
-        <div class="episode-player">
-            <app-episode-player></app-episode-player>
-        </div>
-    </footer>
+  <main class="app-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Floating player — rendered outside grid, fixed over footer -->
+  <app-episode-player></app-episode-player>
+
+  <app-footer></app-footer>
 </div>
