@@ -10,4 +10,5 @@ class CattaneogridItem(scrapy.Item):
     descargas = scrapy.Field()
     fecha = scrapy.Field()
     episodio = scrapy.Field()
+    tracklist = scrapy.Field()
     stats_only = scrapy.Field()  # internal pipeline signal; never written to JSON

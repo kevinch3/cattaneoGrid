@@ -7,6 +7,21 @@ from pathlib import Path
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 
+from CattaneoGrid.tracklist_extractor import extract_tracklist
+
+
+class TracklistNormalizerPipeline:
+    """Auto-extract tracklist from descripcion for new episodes (priority 200)."""
+
+    def process_item(self, item, spider):
+        adapter = ItemAdapter(item)
+        if adapter.get("stats_only"):
+            return item
+        if adapter.get("tracklist"):
+            return item
+        item["tracklist"] = extract_tracklist(adapter.get("descripcion"))
+        return item
+
 
 class JsonArrayWriterPipeline:
     """Stream scraped items into a JSON array with safe backups and deduplication."""

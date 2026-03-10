@@ -20,6 +20,7 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 OUTPUT_JSON_PATH = "../data/db.json"
 ITEM_PIPELINES = {
+    "CattaneoGrid.pipelines.TracklistNormalizerPipeline": 200,
     "CattaneoGrid.pipelines.JsonArrayWriterPipeline": 300,
 }
 
