@@ -1,37 +1,100 @@
-.episode-grid{
+/* Move legacy sort dropdown to top, hide in non-legacy themes */
+.legacy-sort-wrap {
+  display: none; /* hidden by default */
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+:host-context(body[data-theme="legacy"]) .legacy-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.episode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+
+  .episode-item {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    .episode-item{
-        display: grid;
-        padding: 0;
-        width: auto;
-        transition: all 0.3s ease;
-        position: relative;
-        z-index: 1; /* Mantiene la celda en su plano original */
-        cursor: pointer;
-        height: 85px;
-        align-content: center;
-        .titulo{
-            white-space: nowrap;
-        }
-        .episodio{
-            text-align: center;
-        }
-        .like{}
-        .descargas{}
-        .descripcion{}
-    }
+    padding: 0;
+    width: auto;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    height: 85px;
+    align-content: center;
+    transition: all 0.3s ease;
+
+    .episodio { text-align: center; }
+  }
+}
+
+/* Minimal 2D: glitch-in on page load.
+   Must be top-level — :host-context() cannot be nested inside a class selector. */
+:host-context(body[data-theme="minimal-2d"]) .episode-item {
+  border: 1px solid var(--border, transparent);
+  opacity: 0;
+  animation: tile-in 0.5s steps(2) forwards;
+  font-family: var(--font-ui);
+}
+
+/* Minimal 2D: glitch on sort change.
+   .sorting is added to .episode-grid by the component during sort transitions. */
+:host-context(body[data-theme="minimal-2d"]) .episode-grid.sorting .episode-item {
+  animation: tile-sort 0.6s steps(2) forwards;
+}
+
+@keyframes tile-in {
+  0%   { opacity: 0; transform: scaleX(1.06); }
+  40%  { opacity: 1; transform: scaleX(0.97) translateX(1px); }
+  70%  { opacity: 0.7; transform: scaleX(1.02); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes tile-sort {
+  0%   { opacity: 1; filter: blur(0); }
+  20%  { opacity: 0.3; filter: blur(1px); transform: scaleX(1.04); }
+  50%  { opacity: 0.8; filter: blur(0); transform: scaleX(0.98); }
+  100% { opacity: 1; transform: none; }
 }
 
 .episode-detail-row {
-    grid-column: 1 / -1;
-    transition: all 0.3s ease;
-    padding: 60px 30px;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    min-width: 0;
-    .titulo{
-        font-size: 2em;
-        font-weight: 600;
-    }
+  grid-column: 1 / -1;
+  transition: all 0.3s ease;
+  padding: 40px 30px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+
+  .titulo {
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    opacity: 0.75;
+    margin-bottom: 16px;
+  }
+
+  .tracklist {
+    max-height: 300px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.7;
+    font-family: var(--font-ui, 'Libre Franklin', sans-serif);
+  }
+}
+
+/* Minimal 2D: monospace tracklist */
+:host-context(body[data-theme="minimal-2d"]) .tracklist {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--text);
+  border-left: 2px solid var(--accent, #333);
+  padding-left: 12px;
 }

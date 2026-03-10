@@ -1,28 +1,39 @@
-<div class="episode-grid">
-
-  <div>
-    <label for="orderby">Ordenar:</label>
-    <select id="orderby" (change)="onSortChange($event)">
-      @for (option of sortOptions; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
-  </div>
+<!-- app/src/app/components/episodes-grid/episodes-grid.component.html -->
+<div class="episode-grid" [class.sorting]="animatingSort">
 
   @for (episode of episodes; track episode; let i = $index) {
     <div
-      [style.background-color]="episode[selectedSortField]?.color"
-      class="episode-item" (click)="onEpisodeClick(i)">
+      [style.background-color]="episode[sort.selectedField()]?.color"
+      [style.animation-delay]="animatingSort ? (i * 70) + 'ms' : '0ms'"
+      class="episode-item"
+      (click)="onEpisodeClick(i)">
       <div class="episodio">{{ episode.episodio }}</div>
     </div>
+
     @if (selectedIndex === i) {
       <div #detailRow class="episode-detail-row"
-        [style.background-color]="episode[selectedSortField]?.color">
+        [style.background-color]="episode[sort.selectedField()]?.color">
         <div class="titulo">{{ episode.titulo }}</div>
-        <div class="likes">Likes: {{ episode.likes }}</div>
-        <div class="descargas">Descargas: {{ episode.descargas }}</div>
+        <div class="meta">
+          <span class="likes">♥ {{ episode.likes }}</span>
+          <span class="descargas">↓ {{ episode.descargas }}</span>
+          @if (trackCount(episode.tracklist) > 0) {
+            <span class="track-count">{{ trackCount(episode.tracklist) }} tracks</span>
+          }
+        </div>
         <div [innerHTML]="tracklistWithBreaks(episode.tracklist)" class="tracklist"></div>
       </div>
     }
   }
+
+</div>
+
+<!-- Legacy-only sort dropdown (grid controls itself when no header) -->
+<div class="legacy-sort-wrap">
+  <label for="orderby">Ordenar:</label>
+  <select id="orderby" (change)="onLegacySortChange($event)">
+    @for (opt of sort.options(); track opt.value) {
+      <option [value]="opt.value" [selected]="sort.selectedField() === opt.value">{{ opt.label }}</option>
+    }
+  </select>
 </div>
