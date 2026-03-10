@@ -1,3 +1,100 @@
-audio{
-    width: 100%;
+.floating-player {
+  position: fixed;
+  bottom: calc(32px + 20px); /* footer height + gap */
+  left: 20px;
+  right: 20px;
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+
+  background: var(--bg-player, #fff);
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: var(--player-radius, 8px);
+  box-shadow: var(--player-shadow, 0 2px 12px rgba(0,0,0,0.10));
+  font-family: var(--font-ui, 'Libre Franklin', sans-serif);
+  color: var(--text, #222);
+
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.play-btn {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--player-radius, 50%);
+  border: 1px solid var(--border, transparent);
+  background: var(--player-btn-bg, #222);
+  color: var(--player-btn-fg, #fff);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.2s;
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-title {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+.progress-bar {
+  height: 3px;
+  background: var(--player-track, #e0e0e0);
+  border-radius: var(--player-radius, 2px);
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--player-fill, #222);
+  border-radius: var(--player-radius, 2px);
+  transition: width 0.5s linear;
+}
+
+/* ── Minimal 2D dark: phosphor glow on play button ── */
+:host-context(body[data-theme="minimal-2d"][data-mode="dark"]) .play-btn {
+  animation: glow-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: none; }
+  50%       { box-shadow: var(--glow, none); }
+}
+
+/* ── Legacy: restore original native audio bar ── */
+:host-context(body[data-theme="legacy"]) .floating-player {
+  position: static;
+  bottom: unset;
+  left: unset;
+  right: unset;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  border-top: 1px solid #ddd;
+  background: #f0f0f0;
+}
+
+:host-context(body[data-theme="legacy"]) .play-btn,
+:host-context(body[data-theme="legacy"]) .track-info {
+  display: none;
+}
+
+/* In legacy mode, show the native audio element instead */
+:host-context(body[data-theme="legacy"]) audio {
+  display: block !important;
+  width: 100%;
 }
