@@ -1,0 +1,28 @@
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 32px;
+  background: var(--bg-footer, #f5f5f5);
+  border-top: 1px solid var(--border, #e8e8e8);
+  font-family: var(--font-ui, 'Libre Franklin', sans-serif);
+  font-size: 11px;
+  flex-shrink: 0;
+
+  a {
+    color: var(--text-muted, #aaa);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+
+    &:hover { color: var(--text); }
+  }
+
+  .sep { color: var(--border, #ccc); }
+}
+
+/* Legacy: no slim footer — collapse it */
+:host-context(body[data-theme="legacy"]) .app-footer {
+  display: none;
+}
