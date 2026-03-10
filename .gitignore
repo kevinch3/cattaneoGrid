@@ -28,3 +28,4 @@ data/*.json.*
 .DS_Store
 Thumbs.db
 ehthumbs.db
+.superpowers/
