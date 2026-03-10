@@ -13,3 +13,8 @@
   // 80px player height + 20px gap + 32px footer + 12px extra breathing room.
   padding-bottom: calc(80px + 20px + 32px + 12px);
 }
+
+/* Legacy: no floating player padding, no header/footer spacers */
+:host-context(body[data-theme="legacy"]) .app-content {
+  padding-bottom: 0;
+}
