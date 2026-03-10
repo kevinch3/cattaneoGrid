@@ -1,0 +1,99 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: var(--header-height, 52px);
+  background: var(--bg-header, #fff);
+  border-bottom: 1px solid var(--border-header, #e8e8e8);
+  font-family: var(--font-ui, 'Libre Franklin', sans-serif);
+  color: var(--text, #222);
+  flex-shrink: 0;
+
+  .logo {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: var(--text-logo, #111);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* ── Theme pill ── */
+  .theme-pill {
+    display: flex;
+    border: 1px solid var(--border, #ccc);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .pill-btn {
+    padding: 4px 12px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    background: transparent;
+    color: var(--text-muted, #aaa);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &.active {
+      background: var(--text, #222);
+      color: var(--bg, #fff);
+      font-weight: 600;
+    }
+  }
+
+  /* ── Mode toggle ── */
+  .mode-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border, #ccc);
+    background: transparent;
+    color: var(--text-muted, #aaa);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover { color: var(--text); border-color: var(--text); }
+  }
+
+  /* ── Sort dropdown ── */
+  .sort-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sort-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  select {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--player-radius, 4px);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+  }
+}
+
+/* Legacy: header is hidden — grid shows its own sort dropdown */
+:host-context(body[data-theme="legacy"]) .app-header {
+  display: none;
+}

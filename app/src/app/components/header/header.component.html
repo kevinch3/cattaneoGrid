@@ -1,0 +1,37 @@
+<!-- app/src/app/components/header/header.component.html -->
+<header class="app-header">
+  <span class="logo">CATTANEO</span>
+
+  <div class="controls">
+    <!-- Theme style pill -->
+    <div class="theme-pill" role="group" aria-label="Theme style">
+      @for (opt of themeOptions; track opt.value) {
+        <button
+          class="pill-btn"
+          [class.active]="theme.style() === opt.value"
+          (click)="setTheme(opt.value)">
+          {{ opt.label }}
+        </button>
+      }
+    </div>
+
+    <!-- Light/dark toggle — hidden for Legacy -->
+    @if (showModeToggle()) {
+      <button class="mode-btn" (click)="toggleMode()" [attr.aria-label]="isDark() ? 'Switch to light' : 'Switch to dark'">
+        {{ isDark() ? '☀' : '☾' }}
+      </button>
+    }
+
+    <!-- Sort dropdown -->
+    <div class="sort-wrap">
+      <label class="sort-label" for="header-sort">Sort</label>
+      <select id="header-sort" (change)="onSortChange($event)">
+        @for (opt of sort.options(); track opt.value) {
+          <option [value]="opt.value" [selected]="sort.selectedField() === opt.value">
+            {{ opt.label }}
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+</header>
