@@ -25,6 +25,8 @@
     height: 85px;
     align-content: center;
     transition: all 0.3s ease;
+    content-visibility: auto;
+    contain-intrinsic-size: 120px 85px;
 
     .episodio { text-align: center; }
   }

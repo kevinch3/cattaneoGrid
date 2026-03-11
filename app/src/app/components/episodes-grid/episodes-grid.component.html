@@ -4,7 +4,7 @@
   @for (episode of episodes; track episode.episodio; let i = $index) {
     <div
       [style.background-color]="episode[sort.selectedField()]?.color"
-      [style.animation-delay]="animatingSort ? (i * 70) + 'ms' : '0ms'"
+      [style.animation-delay]="animatingSort ? (Math.min(i, 20) * 70) + 'ms' : '0ms'"
       class="episode-item"
       (click)="onEpisodeClick(i)">
       <div class="episodio">{{ episode.episodio }}</div>

@@ -19,6 +19,7 @@ export class EpisodesGridComponent implements OnInit {
   public selectedIndex: number | null = null
   public episodes: EpisodeSort[] = []
   public animatingSort = false  // triggers glitch animation on sort change
+  protected Math = Math  // expose Math to template for animation delay capping
 
   private playerService  = inject(PlayerService)
   private episodesService = inject(EpisodesService)
