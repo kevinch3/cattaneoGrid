@@ -18,8 +18,10 @@ export class EpisodePlayerComponent {
   }
 
   currentContent: PlayableContent | null = null
-  progressPercent: number = 0    // 0–100, updated each timeupdate
+  progressPercent: number = 0    // 0–100, drives fill gradient and range value
+  duration: number = 0           // seconds, populated on loadedmetadata
   isPlaying: boolean = false
+  isDragging: boolean = false    // true while user scrubs; pauses timeupdate syncing
 
   private audioElement: HTMLAudioElement | null = null
   private lastState: PlayerState | null = null
@@ -46,18 +48,31 @@ export class EpisodePlayerComponent {
     }
   }
 
+  onMetadata(): void {
+    this.duration = this.audioElement?.duration ?? 0
+  }
+
   onTimeUpdate(): void {
     if (!this.audioElement || !this.lastState) return
 
-    // Update progress percent for the custom progress bar
-    if (this.audioElement.duration) {
+    // While the user drags the scrubber, don't overwrite their input
+    if (!this.isDragging && this.audioElement.duration) {
       this.progressPercent = (this.audioElement.currentTime / this.audioElement.duration) * 100
     }
 
-    // Sync position back to service (existing behaviour)
     const position = this.audioElement.currentTime
     if (Math.abs(position - this.lastState.currentTime) > 1) {
       this.playerService.performAction('seek', undefined, position)
+    }
+  }
+
+  onSeek(event: Event): void {
+    const pct = +(event.target as HTMLInputElement).value
+    const time = (pct / 100) * this.duration
+    this.progressPercent = pct
+    this.playerService.performAction('seek', undefined, time)
+    if (this.audioElement) {
+      this.audioElement.currentTime = time
     }
   }
 

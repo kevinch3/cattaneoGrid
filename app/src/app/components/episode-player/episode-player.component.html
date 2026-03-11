@@ -2,18 +2,44 @@
 @if (currentContent) {
   <div class="floating-player">
     <button class="play-btn" (click)="togglePlay()" [attr.aria-label]="isPlaying ? 'Pause' : 'Play'">
-      {{ isPlaying ? '⏸' : '▶' }}
+      @if (isPlaying) {
+        <!-- Pause: two vertical bars — inline SVG avoids Safari emoji rendering -->
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+          <rect x="2" y="1" width="5" height="14" rx="1"/>
+          <rect x="9" y="1" width="5" height="14" rx="1"/>
+        </svg>
+      } @else {
+        <!-- Play: right-pointing triangle -->
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+          <polygon points="3,1 15,8 3,15"/>
+        </svg>
+      }
     </button>
 
     <div class="track-info">
       <div class="track-title">{{ currentContent.title }}</div>
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="progressPercent"></div>
-      </div>
+      <!-- Seek bar: styled range input. --progress-pct drives the CSS fill gradient. -->
+      <input
+        type="range"
+        class="seek-bar"
+        [style.--progress-pct]="progressPercent + '%'"
+        [value]="progressPercent"
+        min="0" max="100" step="0.1"
+        [class.dragging]="isDragging"
+        (pointerdown)="isDragging = true"
+        (pointerup)="isDragging = false"
+        (pointercancel)="isDragging = false"
+        (input)="onSeek($event)"
+        aria-label="Seek"
+      >
     </div>
 
     <!-- Native audio element — hidden, driven by component logic -->
-    <audio #audioPlayer (timeupdate)="onTimeUpdate()" (ended)="onAudioEnded()" style="display:none">
+    <audio #audioPlayer
+      (timeupdate)="onTimeUpdate()"
+      (loadedmetadata)="onMetadata()"
+      (ended)="onAudioEnded()"
+      style="display:none">
       <source [src]="currentContent.link" type="audio/mpeg">
     </audio>
   </div>

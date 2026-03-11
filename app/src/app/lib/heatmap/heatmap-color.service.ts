@@ -1,4 +1,4 @@
-import { Injectable, NgZone, DestroyRef, inject, signal, WritableSignal, Signal, effect } from '@angular/core'
+import { Injectable, DestroyRef, inject, signal, WritableSignal, Signal, effect } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { EpisodeSort } from '../../models/episode.model'
 import { ColorSource, HeatmapEvent } from './heatmap.types'
@@ -7,7 +7,6 @@ import { MoodService } from './mood.service'
 @Injectable({ providedIn: 'root' })
 export class HeatmapColorService {
   private readonly moodService = inject(MoodService)
-  private readonly ngZone = inject(NgZone)
   private readonly destroyRef = inject(DestroyRef)
 
   private episodeBaseColors: Map<string, string> = new Map()
@@ -16,7 +15,6 @@ export class HeatmapColorService {
 
   constructor() {
     effect(() => {
-      // Track mood changes and reapply
       this.moodService.currentMood()
       this.reapplyMood()
     })
@@ -60,19 +58,18 @@ export class HeatmapColorService {
   }
 
   private handleEvent(event: HeatmapEvent): void {
-    if (event.episodeId !== undefined) {
-      const sig = this.episodeSignals.get(event.episodeId)
-      if (sig) {
-        this.ngZone.run(() => {
-          sig.set(event.colorModifier(sig()))
-        })
-      }
-    } else {
-      this.ngZone.run(() => {
-        for (const [, sig] of this.episodeSignals) {
-          sig.set(event.colorModifier(sig()))
-        }
-      })
+    const ids = event.episodeId !== undefined
+      ? [event.episodeId]
+      : [...this.episodeSignals.keys()]
+
+    for (const id of ids) {
+      const sig = this.episodeSignals.get(id)
+      if (!sig) continue
+      // applyToBase: apply modifier to the original base color to prevent energy compounding
+      const input = event.applyToBase
+        ? (this.episodeBaseColors.get(id) ?? 'rgb(128,128,128)')
+        : sig()
+      sig.set(event.colorModifier(input))
     }
   }
 
@@ -80,11 +77,9 @@ export class HeatmapColorService {
     const currentMood = this.moodService.currentMood()
     const palette = this.moodService.palettes[currentMood]
 
-    this.ngZone.run(() => {
-      for (const [id, sig] of this.episodeSignals) {
-        const base = this.episodeBaseColors.get(id) ?? 'rgb(128,128,128)'
-        sig.set(palette(base))
-      }
-    })
+    for (const [id, sig] of this.episodeSignals) {
+      const base = this.episodeBaseColors.get(id) ?? 'rgb(128,128,128)'
+      sig.set(palette(base))
+    }
   }
 }

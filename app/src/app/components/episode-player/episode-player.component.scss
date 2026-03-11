@@ -28,7 +28,6 @@
   border: 1px solid var(--border, transparent);
   background: var(--player-btn-bg, #222);
   color: var(--player-btn-fg, #fff);
-  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -50,19 +49,56 @@
   color: var(--text);
 }
 
-.progress-bar {
+/* ── Seek bar ──────────────────────────────────────────────── */
+.seek-bar {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
   height: 3px;
-  background: var(--player-track, #e0e0e0);
-  border-radius: var(--player-radius, 2px);
-  margin-top: 6px;
-  overflow: hidden;
-}
+  margin-top: 8px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  /* Fill the track up to --progress-pct using CSS gradient — no JS animation needed */
+  background: linear-gradient(
+    to right,
+    var(--player-fill, #222) var(--progress-pct, 0%),
+    var(--player-track, #e0e0e0) var(--progress-pct, 0%)
+  );
 
-.progress-fill {
-  height: 100%;
-  background: var(--player-fill, #222);
-  border-radius: var(--player-radius, 2px);
-  transition: width 0.5s linear;
+  /* WebKit (Safari, Chrome) thumb */
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: var(--player-fill, #222);
+    transition: width 0.12s ease, height 0.12s ease, margin-top 0.12s ease;
+  }
+
+  &.dragging::-webkit-slider-thumb,
+  &:active::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+    margin-top: -7px; /* centre 18px ball on 3px track */
+  }
+
+  /* Firefox thumb */
+  &::-moz-range-thumb {
+    width: 0;
+    height: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--player-fill, #222);
+    transition: width 0.12s ease, height 0.12s ease;
+  }
+
+  &.dragging::-moz-range-thumb,
+  &:active::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 /* ── Minimal 2D dark: phosphor glow on play button ── */

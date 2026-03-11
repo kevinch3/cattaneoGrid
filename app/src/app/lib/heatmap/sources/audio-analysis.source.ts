@@ -8,7 +8,7 @@ function energyModifier(energy: number): ColorModifier {
     const rgb = parseRgb(baseColor)
     if (!rgb) return baseColor
     const [r, g, b] = rgb
-    const boost = Math.round(energy * 60)
+    const boost = Math.round(energy * 30)   // 30 instead of 60 — gentler brightening
     return `rgb(${clamp(r + boost)},${clamp(g + boost)},${clamp(b + boost)})`
   }
 }
@@ -26,6 +26,8 @@ export class AudioAnalysisSource implements ColorSource {
   private source: MediaElementAudioSourceNode | null = null
   private rafId: number | null = null
   private lastEnergy: number = 0
+  private smoothedEnergy: number = 0   // EMA-smoothed energy
+  private frameCount: number = 0       // used to throttle emission to ~20fps
   private connected = false
   private _destroyed = false
 
@@ -67,14 +69,21 @@ export class AudioAnalysisSource implements ColorSource {
     for (let i = 0; i < data.length; i++) {
       sum += data[i]
     }
-    const energy = sum / data.length / 255
+    const rawEnergy = sum / data.length / 255
 
-    if (Math.abs(energy - this.lastEnergy) > 0.05) {
-      this.lastEnergy = energy
+    // EMA smoothing: reduces frame-to-frame jitter
+    this.smoothedEnergy = this.smoothedEnergy * 0.8 + rawEnergy * 0.2
+    this.frameCount++
+
+    // Throttle to every 3rd frame (~20fps at 60fps display rate).
+    // CSS transition: all 0.3s on tiles handles interpolation — silky smooth.
+    if (this.frameCount % 3 === 0 && Math.abs(this.smoothedEnergy - this.lastEnergy) > 0.05) {
+      this.lastEnergy = this.smoothedEnergy
       this._subject.next({
         type: 'audio',
         episodeId: undefined,
-        colorModifier: energyModifier(energy)
+        applyToBase: true,   // always apply to stored base color, never stack on current
+        colorModifier: energyModifier(this.smoothedEnergy)
       })
     }
 
