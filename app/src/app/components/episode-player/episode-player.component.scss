@@ -144,8 +144,17 @@
   width: 100%;
 }
 
-.vis-placeholder {
-  height: 48px;
+/* ── Visualizer wrapper: smooth expand/collapse via max-height + opacity ── */
+.vis-wrapper {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+
+  &.vis-open {
+    max-height: 52px;   /* slightly above canvas height so content isn't clipped */
+    opacity: 1;
+  }
 }
 
 .vis-btn {

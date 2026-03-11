@@ -30,11 +30,11 @@
 
     <div class="track-info">
       <div class="track-title">{{ currentContent.title }}</div>
-      @defer (when showVisualizer) {
-        <app-visualizer />
-      } @placeholder {
-        <div class="vis-placeholder"></div>
-      }
+      <div class="vis-wrapper" [class.vis-open]="showVisualizer">
+        @defer (when showVisualizer) {
+          <app-visualizer />
+        }
+      </div>
       <!-- Seek bar: styled range input. --progress-pct drives the CSS fill gradient. -->
       <input
         type="range"
