@@ -3,13 +3,20 @@ import { Injectable, signal, effect } from '@angular/core'
 export type ThemeStyle = 'legacy' | 'default' | 'minimal-2d'
 export type ThemeMode  = 'light' | 'dark'
 
+function lsGet(key: string): string | null {
+  try { return localStorage.getItem(key) } catch { return null }
+}
+function lsSet(key: string, value: string): void {
+  try { localStorage.setItem(key, value) } catch { /* private mode */ }
+}
+
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   readonly style = signal<ThemeStyle>(
-    (localStorage.getItem('theme-style') as ThemeStyle) ?? 'default'
+    (lsGet('theme-style') as ThemeStyle) ?? 'default'
   )
   readonly mode = signal<ThemeMode>(
-    (localStorage.getItem('theme-mode') as ThemeMode) ?? 'light'
+    (lsGet('theme-mode') as ThemeMode) ?? 'light'
   )
 
   constructor() {
@@ -18,8 +25,8 @@ export class ThemeService {
       const m = this.mode()
       document.body.setAttribute('data-theme', s)
       document.body.setAttribute('data-mode', m)
-      localStorage.setItem('theme-style', s)
-      localStorage.setItem('theme-mode', m)
+      lsSet('theme-style', s)
+      lsSet('theme-mode', m)
     })
   }
 
