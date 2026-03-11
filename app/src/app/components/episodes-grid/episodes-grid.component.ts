@@ -6,6 +6,7 @@ import { PlayableContent } from '../../models/playable.model'
 import { EpisodesService } from '../../services/episode/episode.service'
 import { SortService } from '../../services/sort/sort.service'
 import { ThemeService } from '../../services/theme/theme.service'
+import { HeatmapColorService, MouseEventSource, PlayerStateSource, AudioAnalysisSource } from '../../lib/heatmap'
 
 @Component({
   selector: 'app-episodes-grid',
@@ -26,14 +27,23 @@ export class EpisodesGridComponent implements OnInit {
   private cdr            = inject(ChangeDetectorRef)
   protected sort         = inject(SortService)
   protected theme        = inject(ThemeService)
+  public heatmap         = inject(HeatmapColorService)
+  private mouseSource    = inject(MouseEventSource)
+  private playerStateSource = inject(PlayerStateSource)
+  private audioAnalysisSource = inject(AudioAnalysisSource)
 
   constructor() {
+    this.heatmap.registerSource(this.playerStateSource)
+    this.heatmap.registerSource(this.mouseSource)
+    this.heatmap.registerSource(this.audioAnalysisSource)
+
     effect(() => {
       const field = this.sort.selectedField()
       if (this.episodes.length) {
         this.selectedIndex = null
         this.triggerSortAnimation()
         this.sortEpisodes(field)
+        this.heatmap.initEpisodes(this.episodes, field)
         this.cdr.markForCheck()
       }
     })
@@ -47,6 +57,7 @@ export class EpisodesGridComponent implements OnInit {
           this.sort.addOption({ value: '_fechasubida', label: 'Fecha subida' })
         }
         this.sortEpisodes(this.sort.selectedField())
+        this.heatmap.initEpisodes(this.episodes, this.sort.selectedField())
         this.cdr.markForCheck()
       },
       error: (err) => console.error('Error fetching episodes:', err)
@@ -86,6 +97,19 @@ export class EpisodesGridComponent implements OnInit {
   public trackCount(tracklist: string | null | undefined): number {
     if (!tracklist) return 0
     return tracklist.split('\n').filter(l => l.trim()).length
+  }
+
+  public onGridMouseEvent(event: MouseEvent): void {
+    const el = (event.target as HTMLElement).closest('[data-episode-id]')
+    if (el) {
+      const episodeId = el.getAttribute('data-episode-id') ?? ''
+      if (event.type === 'click') {
+        this.mouseSource.emitClick(episodeId)
+      } else if (event.type === 'contextmenu') {
+        this.mouseSource.emitContextMenu(episodeId)
+        event.preventDefault()
+      }
+    }
   }
 
   private sortEpisodes(field: string): void {
