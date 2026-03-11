@@ -1,16 +1,7 @@
 import { Injectable, NgZone, DestroyRef, inject } from '@angular/core'
 import { Subject, Observable } from 'rxjs'
 import { ColorSource, HeatmapEvent, ColorModifier } from '../heatmap.types'
-
-function parseRgb(color: string): [number, number, number] | null {
-  const match = color.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/)
-  if (!match) return null
-  return [parseInt(match[1], 10), parseInt(match[2], 10), parseInt(match[3], 10)]
-}
-
-function clamp(value: number): number {
-  return Math.max(0, Math.min(255, value))
-}
+import { parseRgb, clamp } from '../color-utils'
 
 function energyModifier(energy: number): ColorModifier {
   return (baseColor: string) => {
@@ -36,9 +27,10 @@ export class AudioAnalysisSource implements ColorSource {
   private rafId: number | null = null
   private lastEnergy: number = 0
   private connected = false
+  private _destroyed = false
 
   constructor() {
-    this.destroyRef.onDestroy(() => this.disconnect())
+    this.destroyRef.onDestroy(() => this.destroy())
   }
 
   connect(audioElement: HTMLAudioElement): void {
@@ -86,7 +78,9 @@ export class AudioAnalysisSource implements ColorSource {
       })
     }
 
-    this.rafId = requestAnimationFrame(() => this.tick(ngZone))
+    if (this.connected) {
+      this.rafId = requestAnimationFrame(() => this.tick(ngZone))
+    }
   }
 
   disconnect(): void {
@@ -98,6 +92,8 @@ export class AudioAnalysisSource implements ColorSource {
   }
 
   destroy(): void {
+    if (this._destroyed) return
+    this._destroyed = true
     this.disconnect()
     this._subject.complete()
     if (this.audioContext) {

@@ -3,16 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { Subject, Observable } from 'rxjs'
 import { ColorSource, HeatmapEvent, ColorModifier } from '../heatmap.types'
 import { PlayerService } from '../../../services/player/player.service'
-
-function parseRgb(color: string): [number, number, number] | null {
-  const match = color.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/)
-  if (!match) return null
-  return [parseInt(match[1], 10), parseInt(match[2], 10), parseInt(match[3], 10)]
-}
-
-function clamp(value: number): number {
-  return Math.max(0, Math.min(255, value))
-}
+import { parseRgb, clamp } from '../color-utils'
 
 const brightenModifier: ColorModifier = (baseColor: string) => {
   const rgb = parseRgb(baseColor)
