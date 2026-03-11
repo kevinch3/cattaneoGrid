@@ -28,17 +28,21 @@ export class PlayerStateSource implements ColorSource {
       .subscribe(state => {
         if (state.content !== null) {
           const episodeId = state.content.link
+          // applyToBase: true on both events — prevents brighten from stacking
+          // on every seek/timeupdate state emission, which would saturate to white.
           if (state.isPlaying) {
             this._subject.next({
               type: 'player-state',
               episodeId,
+              applyToBase: true,
               colorModifier: brightenModifier
             })
           } else {
             this._subject.next({
               type: 'player-state',
               episodeId,
-              colorModifier: identityModifier
+              applyToBase: true,
+              colorModifier: identityModifier  // resets tile to base color
             })
           }
         }

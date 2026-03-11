@@ -1,4 +1,11 @@
+/* Host has no natural dimensions (child is position:fixed). Disable pointer-events on
+   the host so iOS ghost-clicks after range-input touch don't fall through to tiles below. */
+:host {
+  pointer-events: none;
+}
+
 .floating-player {
+  pointer-events: auto;  /* re-enable on the actual visible element */
   position: fixed;
   bottom: calc(32px + 20px); /* footer height + gap */
   left: 20px;
@@ -66,6 +73,8 @@
     var(--player-fill, #222) var(--progress-pct, 0%),
     var(--player-track, #e0e0e0) var(--progress-pct, 0%)
   );
+
+  touch-action: pan-x;  /* let browser handle horizontal pan for seek, block vertical scroll interference */
 
   /* WebKit (Safari, Chrome) thumb */
   &::-webkit-slider-thumb {

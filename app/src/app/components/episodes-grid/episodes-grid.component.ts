@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, effect } from '@angular/core'
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, inject, effect, untracked } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { PlayerService } from '../../services/player/player.service'
 import { EpisodeExtended, EpisodeSort } from '../../models/episode.model'
@@ -40,10 +40,24 @@ export class EpisodesGridComponent implements OnInit {
     effect(() => {
       const field = this.sort.selectedField()
       if (this.episodes.length) {
-        this.selectedIndex = null
-        this.triggerSortAnimation()
+        // Save the selected episode's identity before sort so we can restore it
+        const selectedId = this.selectedIndex !== null
+          ? this.episodes[this.selectedIndex]?.link ?? null
+          : null
+
+        // untracked: triggerSortAnimation reads theme.activePreset() which must NOT
+        // register as a dependency here — theme changes must not reset the selection.
+        untracked(() => this.triggerSortAnimation())
+
         this.sortEpisodes(field)
         this.heatmap.initEpisodes(this.episodes, field)
+
+        // Restore the selection at its new position after re-ordering
+        this.selectedIndex = selectedId !== null
+          ? this.episodes.findIndex(e => e.link === selectedId)
+          : null
+        if (this.selectedIndex === -1) this.selectedIndex = null
+
         this.cdr.markForCheck()
       }
     })

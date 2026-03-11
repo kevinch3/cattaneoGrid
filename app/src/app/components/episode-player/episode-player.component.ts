@@ -1,8 +1,9 @@
 // app/src/app/components/episode-player/episode-player.component.ts
-import { Component, ElementRef, ViewChild } from '@angular/core'
+import { Component, ElementRef, ViewChild, inject } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { PlayerService } from '../../services/player/player.service'
 import { PlayableContent, PlayerState } from '../../models/playable.model'
+import { AudioAnalysisSource } from '../../lib/heatmap'
 
 @Component({
   selector: 'app-episode-player',
@@ -14,6 +15,9 @@ export class EpisodePlayerComponent {
   @ViewChild('audioPlayer')
   set audioPlayerRef(ref: ElementRef<HTMLAudioElement> | undefined) {
     this.audioElement = ref?.nativeElement ?? null
+    if (this.audioElement) {
+      this.audioAnalysis.connect(this.audioElement)
+    }
     this.syncAudio()
   }
 
@@ -26,6 +30,7 @@ export class EpisodePlayerComponent {
   private audioElement: HTMLAudioElement | null = null
   private lastState: PlayerState | null = null
   private activeLink: string | null = null
+  private readonly audioAnalysis = inject(AudioAnalysisSource)
 
   constructor(private readonly playerService: PlayerService) {
     this.playerService
