@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, effect, DestroyRef, inject } from '@angular/core'
+import { Injectable, signal, effect, DestroyRef, inject } from '@angular/core'
 
 export type ThemeStyle = 'legacy' | 'default' | 'minimal-2d'
 export type ThemeMode = 'light' | 'dark' | 'system'
@@ -47,12 +47,16 @@ export class ThemeService {
 
     // Watch for preset changes to reinitialize system listener
     effect(() => {
+      this._activePreset()
       this.initSystemListener()
     })
 
     // Watch resolved mode changes to update data-mode on body
     effect(() => {
-      document.body.setAttribute('data-mode', this._resolvedMode())
+      const mode = this._resolvedMode()
+      if (typeof document !== 'undefined') {
+        document.body.setAttribute('data-mode', mode)
+      }
     })
 
     // Cleanup on destroy
@@ -64,9 +68,7 @@ export class ThemeService {
   setPreset(preset: ThemePreset): void {
     this._activePreset.set(preset)
     this.applyPreset()
-    try {
-      lsSet('theme-preset', JSON.stringify({ style: preset.style, mode: preset.mode }))
-    } catch { /* private mode */ }
+    lsSet('theme-preset', JSON.stringify({ style: preset.style, mode: preset.mode }))
   }
 
   private loadInitialPreset(): ThemePreset {
@@ -97,7 +99,6 @@ export class ThemeService {
     const preset = this._activePreset()
     this.updateResolvedMode(preset.mode)
     document.body.setAttribute('data-theme', preset.style)
-    document.body.setAttribute('data-mode', this._resolvedMode())
 
     const href = `/assets/themes/theme-${preset.style}.css`
     let link = document.getElementById('theme-css') as HTMLLinkElement | null
