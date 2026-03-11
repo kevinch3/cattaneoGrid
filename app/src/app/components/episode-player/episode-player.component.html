@@ -37,6 +37,7 @@
     <!-- Native audio element — hidden in non-legacy themes; legacy CSS shows it with controls -->
     <audio #audioPlayer
       controls
+      crossorigin="anonymous"
       (timeupdate)="onTimeUpdate()"
       (loadedmetadata)="onMetadata()"
       (ended)="onAudioEnded()"
