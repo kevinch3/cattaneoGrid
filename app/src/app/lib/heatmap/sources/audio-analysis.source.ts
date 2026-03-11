@@ -42,6 +42,11 @@ export class AudioAnalysisSource implements ColorSource {
       this.audioContext = new AudioContext()
     }
 
+    // Browsers suspend AudioContext by default (autoplay policy).
+    // resume() must be called inside a user-gesture call stack — connect() is always
+    // triggered by a user clicking an episode, so this is safe and necessary.
+    void this.audioContext.resume()
+
     this.analyser = this.audioContext.createAnalyser()
     this.analyser.fftSize = 256
 
@@ -51,6 +56,11 @@ export class AudioAnalysisSource implements ColorSource {
 
     this.connected = true
     this.startLoop(this.ngZone)
+  }
+
+  /** Call from a user-gesture handler (e.g. play button) to keep the context running. */
+  resume(): void {
+    void this.audioContext?.resume()
   }
 
   private startLoop(ngZone: NgZone): void {

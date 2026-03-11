@@ -46,6 +46,8 @@ export class EpisodePlayerComponent {
 
   togglePlay(): void {
     if (!this.lastState) return
+    // Keep AudioContext running — browsers may re-suspend it; this is a user gesture.
+    this.audioAnalysis.resume()
     if (this.lastState.isPlaying) {
       this.playerService.performAction('pause')
     } else {
