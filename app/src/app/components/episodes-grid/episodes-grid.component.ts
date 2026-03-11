@@ -21,7 +21,7 @@ export class EpisodesGridComponent implements OnInit {
   public animatingSort = false  // triggers glitch animation on sort change
   protected Math = Math  // expose Math to template for animation delay capping
 
-  private playerService  = inject(PlayerService)
+  protected playerService = inject(PlayerService)
   private episodesService = inject(EpisodesService)
   private cdr            = inject(ChangeDetectorRef)
   protected sort         = inject(SortService)
@@ -86,12 +86,6 @@ export class EpisodesGridComponent implements OnInit {
     this.playerService.performAction('play', content)
   }
 
-  // Used by legacy-sort-wrap dropdown in template (consistent pattern with HeaderComponent)
-  public onLegacySortChange(event: Event): void {
-    const select = event.target as HTMLSelectElement
-    this.sort.setField(select.value)
-  }
-
   public tracklistWithBreaks(tracklist: string | null | undefined): string {
     if (!tracklist) return ''
     return tracklist.replace(/\n/g, '<br>')
@@ -112,6 +106,20 @@ export class EpisodesGridComponent implements OnInit {
       if (bv === null) return -1
       return bv - av
     })
+  }
+
+  public tileSubLabel(episode: EpisodeSort, field: string): string | null {
+    if (field === '_episodio') return null
+    const ext = episode[field as keyof EpisodeSort] as EpisodeExtended | undefined
+    if (!ext?.value) return null
+
+    if (field === '_fecha' || field === '_fechasubida') {
+      const d = new Date(ext.value)
+      if (isNaN(d.getTime())) return ext.value
+      return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
+    }
+
+    return ext.value
   }
 
   private getSortableValue(episode: EpisodeSort, field: string): number | null {

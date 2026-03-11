@@ -120,30 +120,6 @@
   50%       { box-shadow: var(--glow, none); }
 }
 
-/* ── Legacy: restore original native audio bar ── */
-:host-context(body[data-theme="legacy"]) .floating-player {
-  position: static;
-  bottom: unset;
-  left: unset;
-  right: unset;
-  border-radius: 0;
-  box-shadow: none;
-  border: none;
-  border-top: 1px solid #ddd;
-  background: #f0f0f0;
-}
-
-:host-context(body[data-theme="legacy"]) .play-btn,
-:host-context(body[data-theme="legacy"]) .track-info {
-  display: none;
-}
-
-/* In legacy mode, show the native audio element instead */
-:host-context(body[data-theme="legacy"]) audio {
-  display: block !important;
-  width: 100%;
-}
-
 /* ── Visualizer wrapper: smooth expand/collapse via max-height + opacity ── */
 .vis-wrapper {
   overflow: hidden;

@@ -1,6 +1,6 @@
 import { Injectable, signal, effect, DestroyRef, inject } from '@angular/core'
 
-export type ThemeStyle = 'legacy' | 'default' | 'minimal-2d'
+export type ThemeStyle = 'default' | 'minimal-2d'
 export type ThemeMode = 'light' | 'dark' | 'system'
 
 export interface ThemePreset {
@@ -19,13 +19,8 @@ function lsSet(key: string, value: string): void {
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   readonly presets: ThemePreset[] = [
-    { label: 'Legacy',              style: 'legacy',    mode: 'light'  },
-    { label: 'Default · System',    style: 'default',   mode: 'system' },
-    { label: 'Default · Light',     style: 'default',   mode: 'light'  },
-    { label: 'Default · Dark',      style: 'default',   mode: 'dark'   },
-    { label: 'Minimal 2D · System', style: 'minimal-2d', mode: 'system' },
-    { label: 'Minimal 2D · Light',  style: 'minimal-2d', mode: 'light'  },
-    { label: 'Minimal 2D · Dark',   style: 'minimal-2d', mode: 'dark'   },
+    { label: 'Default',    style: 'default',    mode: 'system' },
+    { label: 'Minimal 2D', style: 'minimal-2d', mode: 'system' },
   ]
 
   private readonly _activePreset = signal<ThemePreset>(this.loadInitialPreset())
@@ -72,7 +67,7 @@ export class ThemeService {
   }
 
   private loadInitialPreset(): ThemePreset {
-    const fallback = this.presets.find(p => p.label === 'Default · System')!
+    const fallback = this.presets.find(p => p.style === 'default')!
     try {
       const raw = lsGet('theme-preset')
       if (!raw) return fallback

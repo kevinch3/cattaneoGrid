@@ -37,6 +37,7 @@
       var preset = null;
       try { preset = JSON.parse(localStorage.getItem('theme-preset')); } catch(e) {}
       var style = (preset && preset.style) || 'default';
+      if (style === 'legacy') { style = 'default'; try { localStorage.removeItem('theme-preset'); } catch(e) {} }
       var mode = (preset && preset.mode) || 'system';
       var resolved = mode === 'system'
         ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')

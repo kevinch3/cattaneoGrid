@@ -9,6 +9,10 @@
       [attr.data-episode-id]="episode.link"
       (click)="onEpisodeClick(i)">
       <div class="episodio">{{ episode.episodio }}</div>
+      @let sub = tileSubLabel(episode, sort.selectedField());
+      @if (sub) {
+        <div class="field-value">{{ sub }}</div>
+      }
     </div>
 
     @if (selectedIndex === i) {
@@ -33,14 +37,4 @@
     }
   }
 
-</div>
-
-<!-- Legacy-only sort dropdown (grid controls itself when no header) -->
-<div class="legacy-sort-wrap">
-  <label for="orderby">Ordenar:</label>
-  <select id="orderby" (change)="onLegacySortChange($event)">
-    @for (opt of sort.options(); track opt.value) {
-      <option [value]="opt.value" [selected]="sort.selectedField() === opt.value">{{ opt.label }}</option>
-    }
-  </select>
 </div>

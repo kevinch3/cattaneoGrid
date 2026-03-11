@@ -20,37 +20,75 @@
   .controls {
     display: flex;
     align-items: center;
-    gap: 12px;
-  }
-
-  /* ── Sort / Theme dropdowns ── */
-  .sort-wrap {
-    display: flex;
-    align-items: center;
     gap: 6px;
-  }
-
-  .sort-label {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-
-  select,
-  .theme-select {
-    font-family: var(--font-ui);
-    font-size: 11px;
-    padding: 4px 8px;
-    border: 1px solid var(--border);
-    border-radius: var(--player-radius, 4px);
-    background: var(--bg);
-    color: var(--text);
-    cursor: pointer;
   }
 }
 
-/* Legacy: header is hidden — grid shows its own sort dropdown */
-:host-context(body[data-theme="legacy"]) .app-header {
-  display: none;
+/* ── Menu wrapper (relative anchor for the dropdown) ── */
+.menu-wrap {
+  position: relative;
+}
+
+/* ── Icon button ── */
+.menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: var(--player-radius, 6px);
+  background: transparent;
+  color: var(--text, #222);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--bg, #f5f5f5);
+    border-color: var(--text-muted, #aaa);
+  }
+
+  &.open {
+    background: var(--text, #222);
+    border-color: var(--text, #222);
+    color: var(--bg, #fff);
+  }
+}
+
+/* ── Dropdown panel ── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 130px;
+  background: var(--bg-header, #fff);
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  font-family: var(--font-ui, 'Libre Franklin', sans-serif);
+  font-size: 12px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: var(--text, #222);
+  cursor: pointer;
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--border, #f0f0f0);
+  }
+
+  &.selected {
+    font-weight: 600;
+    padding-left: 10px;
+    border-left: 2px solid var(--text, #222);
+  }
 }

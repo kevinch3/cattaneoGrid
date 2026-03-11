@@ -60,6 +60,7 @@ export class EpisodePlayerComponent {
 
   onMetadata(): void {
     this.duration = this.audioElement?.duration ?? 0
+    this.syncAudio()  // audio is now seekable — apply saved position
   }
 
   onTimeUpdate(): void {

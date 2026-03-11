@@ -21,8 +21,3 @@
 
   .sep { color: var(--border, #ccc); }
 }
-
-/* Legacy: no slim footer — collapse it */
-:host-context(body[data-theme="legacy"]) .app-footer {
-  display: none;
-}

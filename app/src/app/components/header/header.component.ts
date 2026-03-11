@@ -1,10 +1,7 @@
-// app/src/app/components/header/header.component.ts
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core'
+import { Component, ChangeDetectionStrategy, HostListener, ElementRef, inject, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ThemeService } from '../../services/theme/theme.service'
 import { SortService } from '../../services/sort/sort.service'
-import { MoodService } from '../../lib/heatmap'
-import { HeatmapMood } from '../../lib/heatmap/heatmap.types'
 
 @Component({
   selector: 'app-header',
@@ -17,21 +14,29 @@ import { HeatmapMood } from '../../lib/heatmap/heatmap.types'
 export class HeaderComponent {
   protected theme = inject(ThemeService)
   protected sort  = inject(SortService)
-  readonly mood = inject(MoodService)
+  private readonly elRef = inject(ElementRef)
 
-  onThemeChange(event: Event): void {
-    const select = event.target as HTMLSelectElement
-    const index = Number(select.value)
+  protected openMenu = signal<'theme' | 'sort' | null>(null)
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elRef.nativeElement.contains(event.target as Node)) {
+      this.openMenu.set(null)
+    }
+  }
+
+  toggleMenu(menu: 'theme' | 'sort', event: MouseEvent): void {
+    event.stopPropagation()
+    this.openMenu.update(current => current === menu ? null : menu)
+  }
+
+  selectTheme(index: number): void {
     this.theme.setPreset(this.theme.presets[index])
+    this.openMenu.set(null)
   }
 
-  onSortChange(event: Event): void {
-    const select = event.target as HTMLSelectElement
-    this.sort.setField(select.value)
-  }
-
-  onMoodChange(event: Event): void {
-    const select = event.target as HTMLSelectElement
-    this.mood.setMood(select.value as HeatmapMood)
+  selectSort(value: string): void {
+    this.sort.setField(value)
+    this.openMenu.set(null)
   }
 }

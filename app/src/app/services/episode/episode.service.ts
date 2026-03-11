@@ -19,11 +19,11 @@ export class EpisodesService {
     const fechaSubidaValues = episodes.map(episode => this.parseDateField(episode.fechasubida));
     const episodioValues = episodes.map(episode => this.parseIntegerField(episode.episodio));
 
-    const colorScaleLikes = this.createColorScale(this.getMaxValue(likesValues));
-    const colorScaleDescargas = this.createColorScale(this.getMaxValue(descargasValues));
-    const colorScaleFecha = this.createColorScale(this.getMaxValue(fechaValues));
-    const colorScaleFechasubida = this.createColorScale(this.getMaxValue(fechaSubidaValues));
-    const colorScaleEpisodio = this.createColorScale(this.getMaxValue(episodioValues), 1);
+    const colorScaleLikes = this.createColorScale(this.getMinValue(likesValues), this.getMaxValue(likesValues));
+    const colorScaleDescargas = this.createColorScale(this.getMinValue(descargasValues), this.getMaxValue(descargasValues));
+    const colorScaleFecha = this.createColorScale(this.getMinValue(fechaValues), this.getMaxValue(fechaValues));
+    const colorScaleFechasubida = this.createColorScale(this.getMinValue(fechaSubidaValues), this.getMaxValue(fechaSubidaValues));
+    const colorScaleEpisodio = this.createColorScale(this.getMinValue(episodioValues), this.getMaxValue(episodioValues));
 
     return of(
       episodes.map(episode =>
@@ -126,6 +126,16 @@ export class EpisodesService {
     return Number.isFinite(timestamp) ? timestamp : null;
   }
 
+  private getMinValue(values: Array<number | null>): number | null {
+    let min: number | null = null;
+    for (const v of values) {
+      if (typeof v === 'number' && Number.isFinite(v) && (min === null || v < min)) {
+        min = v;
+      }
+    }
+    return min;
+  }
+
   private getMaxValue(values: Array<number | null>): number | null {
     let max: number | null = null;
     for (const v of values) {
@@ -137,14 +147,13 @@ export class EpisodesService {
   }
 
   // Linear interpolation from CSS green (#008000 = rgb(0,128,0)) to red (#ff0000 = rgb(255,0,0))
-  private createColorScale(maxValue: number | null, domainStart: number = 0): ColorScale {
-    if (maxValue === null) {
+  private createColorScale(minValue: number | null, maxValue: number | null): ColorScale {
+    if (minValue === null || maxValue === null) {
       return null;
     }
-    const min = Math.min(domainStart, maxValue);
-    const range = maxValue - min;
+    const range = maxValue - minValue;
     return (value: number) => {
-      const t = range > 0 ? (value - min) / range : 0;
+      const t = range > 0 ? (value - minValue) / range : 0;
       const r = Math.round(255 * t);
       const g = Math.round(128 * (1 - t));
       return `rgb(${r},${g},0)`;
