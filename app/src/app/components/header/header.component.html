@@ -20,5 +20,15 @@
         }
       </select>
     </div>
+    @if (theme.activePreset().style !== 'legacy') {
+      <div class="sort-wrap">
+        <label class="sort-label" for="header-mood">Mood</label>
+        <select id="header-mood" (change)="onMoodChange($event)">
+          @for (opt of mood.moodOptions; track opt.value) {
+            <option [value]="opt.value" [selected]="mood.currentMood() === opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+    }
   </div>
 </header>
