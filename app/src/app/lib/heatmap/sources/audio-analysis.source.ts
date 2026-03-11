@@ -21,6 +21,9 @@ export class AudioAnalysisSource implements ColorSource {
   private _subject = new Subject<HeatmapEvent>()
   readonly events$: Observable<HeatmapEvent> = this._subject.asObservable()
 
+  private _frequencyData$ = new Subject<Uint8Array>()
+  readonly frequencyData$: Observable<Uint8Array> = this._frequencyData$.asObservable()
+
   private audioContext: AudioContext | null = null
   private analyser: AnalyserNode | null = null
   private source: MediaElementAudioSourceNode | null = null
@@ -63,6 +66,10 @@ export class AudioAnalysisSource implements ColorSource {
     void this.audioContext?.resume()
   }
 
+  getAnalyserNode(): AnalyserNode | null {
+    return this.analyser
+  }
+
   private startLoop(ngZone: NgZone): void {
     ngZone.runOutsideAngular(() => {
       this.tick(ngZone)
@@ -74,6 +81,9 @@ export class AudioAnalysisSource implements ColorSource {
 
     const data = new Uint8Array(this.analyser.frequencyBinCount)
     this.analyser.getByteFrequencyData(data)
+
+    // Emit raw FFT data on every frame for canvas visualizer
+    this._frequencyData$.next(new Uint8Array(data))
 
     let sum = 0
     for (let i = 0; i < data.length; i++) {
@@ -115,6 +125,7 @@ export class AudioAnalysisSource implements ColorSource {
     this._destroyed = true
     this.disconnect()
     this._subject.complete()
+    this._frequencyData$.complete()
     if (this.audioContext) {
       this.audioContext.close()
       this.audioContext = null
