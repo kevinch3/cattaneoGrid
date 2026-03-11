@@ -53,7 +53,7 @@ export class EpisodesGridComponent implements OnInit {
   }
 
   private triggerSortAnimation(): void {
-    if (this.theme.style() !== 'minimal-2d') return
+    if (this.theme.activePreset().style !== 'minimal-2d') return
     this.animatingSort = true
     setTimeout(() => { this.animatingSort = false; this.cdr.markForCheck() }, 800)
   }

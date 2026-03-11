@@ -4,18 +4,14 @@
 <header class="app-header">
   <span class="logo">CATTANEO</span>
   <div class="controls">
-    <div class="theme-pill" role="group" aria-label="Theme style">
-      @for (opt of themeOptions; track opt.value) {
-        <button class="pill-btn" [class.active]="theme.style() === opt.value" (click)="setTheme(opt.value)">
-          {{ opt.label }}
-        </button>
-      }
+    <div class="sort-wrap">
+      <label class="sort-label" for="header-theme">Theme</label>
+      <select class="theme-select" id="header-theme" (change)="onThemeChange($event)">
+        @for (opt of theme.presets; track opt.label; let i = $index) {
+          <option [value]="i" [selected]="theme.activePreset() === opt">{{ opt.label }}</option>
+        }
+      </select>
     </div>
-    @if (showModeToggle()) {
-      <button class="mode-btn" (click)="toggleMode()" [attr.aria-label]="isDark() ? 'Switch to light' : 'Switch to dark'">
-        {{ isDark() ? '☀' : '☾' }}
-      </button>
-    }
     <div class="sort-wrap">
       <label class="sort-label" for="header-sort">Sort</label>
       <select id="header-sort" (change)="onSortChange($event)">
@@ -26,12 +22,3 @@
     </div>
   </div>
 </header>
-
-<!-- Legacy-only floating pill — visible only when data-theme="legacy" -->
-<div class="legacy-theme-pill" role="group" aria-label="Switch theme">
-  @for (opt of themeOptions; track opt.value) {
-    <button class="pill-btn" [class.active]="theme.style() === opt.value" (click)="setTheme(opt.value)">
-      {{ opt.label }}
-    </button>
-  }
-</div>

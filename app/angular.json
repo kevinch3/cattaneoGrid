@@ -100,7 +100,8 @@
           "options": {
             "buildTarget": "cattaneoGridApp:build:development",
             "tsConfig": "tsconfig.spec.json",
-            "runner": "vitest"
+            "runner": "vitest",
+            "setupFiles": ["src/test-setup.ts"]
           }
         },
         "deploy": {
