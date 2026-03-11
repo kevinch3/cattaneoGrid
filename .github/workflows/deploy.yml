@@ -8,6 +8,7 @@ on:
       - 'app/angular.json'
       - 'app/package.json'
       - 'app/package-lock.json'
+      - 'app/.browserslistrc'
   workflow_dispatch:
 
 jobs:
