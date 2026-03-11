@@ -1,11 +1,9 @@
 <!-- app/src/app/components/episodes-grid/episodes-grid.component.html -->
-<div class="episode-grid" [class.sorting]="animatingSort"
-  (click)="onGridMouseEvent($event)"
-  (contextmenu)="onGridMouseEvent($event)">
+<div class="episode-grid" [class.sorting]="animatingSort">
 
   @for (episode of episodes; track episode.episodio; let i = $index) {
     <div
-      [style.background-color]="heatmap.getColor(episode.link ?? '')()"
+      [style.background-color]="episode[sort.selectedField()]?.color ?? 'grey'"
       [style.animation-delay]="animatingSort ? (Math.min(i, 20) * 70) + 'ms' : '0ms'"
       class="episode-item"
       [attr.data-episode-id]="episode.link"
@@ -15,7 +13,7 @@
 
     @if (selectedIndex === i) {
       <div #detailRow class="episode-detail-row"
-        [style.background-color]="heatmap.getColor(episode.link ?? '')()">
+        [style.background-color]="episode[sort.selectedField()]?.color ?? 'grey'">
         <div class="titulo">{{ episode.titulo }}</div>
         <div class="meta">
           <span class="likes">

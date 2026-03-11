@@ -4,10 +4,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { PlayerService } from '../../services/player/player.service'
 import { PlayableContent, PlayerState } from '../../models/playable.model'
 import { AudioAnalysisSource } from '../../lib/heatmap'
+import { VisualizerComponent } from '../visualizer/visualizer.component'
 
 @Component({
   selector: 'app-episode-player',
   standalone: true,
+  imports: [VisualizerComponent],
   templateUrl: './episode-player.component.html',
   styleUrl: './episode-player.component.scss'
 })
@@ -26,6 +28,7 @@ export class EpisodePlayerComponent {
   duration: number = 0           // seconds, populated on loadedmetadata
   isPlaying: boolean = false
   isDragging: boolean = false    // true while user scrubs; pauses timeupdate syncing
+  showVisualizer: boolean = false
 
   private audioElement: HTMLAudioElement | null = null
   private lastState: PlayerState | null = null

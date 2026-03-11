@@ -1,6 +1,3 @@
 export * from './heatmap.types'
 export * from './mood.service'
-export * from './heatmap-color.service'
-export * from './sources/player-state.source'
-export * from './sources/mouse-event.source'
 export * from './sources/audio-analysis.source'
