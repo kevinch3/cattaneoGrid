@@ -34,8 +34,9 @@
       >
     </div>
 
-    <!-- Native audio element — hidden, driven by component logic -->
+    <!-- Native audio element — hidden in non-legacy themes; legacy CSS shows it with controls -->
     <audio #audioPlayer
+      controls
       (timeupdate)="onTimeUpdate()"
       (loadedmetadata)="onMetadata()"
       (ended)="onAudioEnded()"
