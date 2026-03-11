@@ -1,9 +1,0 @@
-/* ══════════════════════════════════════════════
-   LEGACY THEME — single variant, no tokens needed
-   (component uses its own hardcoded styles)
-   ══════════════════════════════════════════════ */
-body[data-theme="legacy"] {
-  --header-height:0px;
-  --footer-height:auto;
-  --font-ui:      'Libre Franklin', sans-serif;
-}
