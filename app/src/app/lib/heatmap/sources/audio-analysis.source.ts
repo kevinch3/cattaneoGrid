@@ -26,7 +26,7 @@ export class AudioAnalysisSource implements ColorSource {
 
   private audioContext: AudioContext | null = null
   private analyser: AnalyserNode | null = null
-  private source: MediaElementAudioSourceNode | null = null
+  private source: MediaStreamAudioSourceNode | null = null
   private rafId: number | null = null
   private lastEnergy: number = 0
   private smoothedEnergy: number = 0   // EMA-smoothed energy
@@ -50,19 +50,21 @@ export class AudioAnalysisSource implements ColorSource {
     // triggered by a user clicking an episode, so this is safe and necessary.
     void this.audioContext.resume()
 
-    // Recover immediately when the browser auto-suspends us (background tab policy)
-    this.audioContext.addEventListener('statechange', () => {
-      if (this.audioContext?.state === 'suspended') {
-        void this.audioContext?.resume()
-      }
-    })
-
     this.analyser = this.audioContext.createAnalyser()
     this.analyser.fftSize = 256
 
-    this.source = this.audioContext.createMediaElementSource(audioElement)
-    this.source.connect(this.analyser)
-    this.analyser.connect(this.audioContext.destination)
+    // Use captureStream() to get a copy of audio for analysis without routing
+    // through the suspended AudioContext. Native <audio> element stays independent.
+    // On iOS Safari where captureStream is unavailable, analysis is silently skipped.
+    const stream = (audioElement as any).captureStream?.()
+    if (stream) {
+      this.source = this.audioContext.createMediaStreamSource(stream)
+      this.source.connect(this.analyser)
+      // Don't connect analyser to destination — native audio element handles playback
+    } else {
+      // captureStream not available (iOS Safari)
+      this.source = null
+    }
 
     this.connected = true
     this.startLoop(this.ngZone)

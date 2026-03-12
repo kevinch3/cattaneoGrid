@@ -196,6 +196,10 @@ export class EpisodePlayerComponent implements OnDestroy {
     const video = this._pipVideo
     if (!video) return
 
+    // Guard against browsers that don't support captureStream (iOS Safari)
+    const testCanvas = document.createElement('canvas')
+    if (typeof (testCanvas as any).captureStream !== 'function') return
+
     const canvas = document.createElement('canvas')
     canvas.width = 320
     canvas.height = 90
