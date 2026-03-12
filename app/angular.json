@@ -31,6 +31,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/CNAME",
+              "src/sw.js",
               {
                 "glob": "**/*",
                 "input": "src/assets",

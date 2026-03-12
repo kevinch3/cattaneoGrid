@@ -6,6 +6,7 @@
       [style.animation-delay]="animatingSort ? (Math.min(i, 20) * 70) + 'ms' : '0ms'"
       class="episode-item"
       [class.completed]="playerService.completedIds().has(episode.episodio ?? '')"
+      [class.downloaded]="downloadService.downloaded().has(episode.episodio ?? '')"
       [attr.data-episode-id]="episode.link"
       (click)="onEpisodeClick(i)">
       <div class="episodio">{{ episode.episodio }}</div>

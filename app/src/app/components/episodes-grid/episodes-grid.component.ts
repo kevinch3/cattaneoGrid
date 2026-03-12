@@ -6,6 +6,7 @@ import { PlayableContent } from '../../models/playable.model'
 import { EpisodesService } from '../../services/episode/episode.service'
 import { SortService } from '../../services/sort/sort.service'
 import { ThemeService } from '../../services/theme/theme.service'
+import { DownloadService } from '../../services/download/download.service'
 
 @Component({
   selector: 'app-episodes-grid',
@@ -22,6 +23,7 @@ export class EpisodesGridComponent implements OnInit {
   protected Math = Math  // expose Math to template for animation delay capping
 
   protected playerService = inject(PlayerService)
+  protected downloadService = inject(DownloadService)
   private episodesService = inject(EpisodesService)
   private cdr            = inject(ChangeDetectorRef)
   protected sort         = inject(SortService)

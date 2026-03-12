@@ -28,6 +28,52 @@
       </svg>
     </button>
 
+    <!-- Download button: idle/progress/downloaded states -->
+    @if (currentContent) {
+      @let progress = downloadService.progress().get(currentContent.id);
+      @let isDownloaded = downloadService.downloaded().has(currentContent.id);
+      @switch (true) {
+        <!-- Downloaded state with long-press delete -->
+        @case (isDownloaded) {
+          <div class="download-btn-wrapper"
+            (pointerdown)="downloadPointerDown($event)"
+            (pointerup)="downloadPointerUp()"
+            (pointerleave)="downloadPointerUp()">
+            <button class="download-btn downloaded" aria-label="Downloaded - long press to delete">
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+              </svg>
+            </button>
+            @if (isConfirmingDelete) {
+              <button class="delete-confirm-btn" (click)="confirmDelete()" aria-label="Delete download">
+                ✕ Remove
+              </button>
+            }
+          </div>
+        }
+        <!-- Downloading state -->
+        @case (typeof progress === 'number') {
+          <button class="download-btn downloading" aria-label="Downloading...">
+            @if (progress >= 0) {
+              <span class="progress-text">{{ progress }}%</span>
+            } @else {
+              <svg viewBox="0 0 16 16" width="12" height="12" fill="currentColor" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+              </svg>
+            }
+          </button>
+        }
+        <!-- Idle state -->
+        @default {
+          <button class="download-btn" (click)="startDownload()" aria-label="Download episode">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+              <path d="M8 12L2 6h4V1h4v5h4L8 12z"/>
+            </svg>
+          </button>
+        }
+      }
+    }
+
     <div class="track-info">
       <div class="track-title">{{ currentContent.title }}</div>
       <div class="vis-wrapper" [class.vis-open]="showVisualizer">

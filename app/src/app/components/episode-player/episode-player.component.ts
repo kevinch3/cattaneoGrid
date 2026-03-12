@@ -5,6 +5,8 @@ import { PlayerService } from '../../services/player/player.service'
 import { PlayableContent, PlayerState } from '../../models/playable.model'
 import { AudioAnalysisSource } from '../../lib/heatmap'
 import { VisualizerComponent } from '../visualizer/visualizer.component'
+import { MediaSessionService } from '../../services/media-session/media-session.service'
+import { DownloadService } from '../../services/download/download.service'
 
 @Component({
   selector: 'app-episode-player',
@@ -29,13 +31,56 @@ export class EpisodePlayerComponent {
   isPlaying: boolean = false
   isDragging: boolean = false    // true while user scrubs; pauses timeupdate syncing
   showVisualizer: boolean = false
+  isConfirmingDelete: boolean = false
+
+  private downloadLongPressTimer: number | null = null
+  private readonly LONG_PRESS_MS = 500
 
   private audioElement: HTMLAudioElement | null = null
   private lastState: PlayerState | null = null
   private activeLink: string | null = null
+  private lastReportedPosition = 0
   private readonly audioAnalysis = inject(AudioAnalysisSource)
+  private readonly mediaSessionService = inject(MediaSessionService)
+  protected readonly downloadService = inject(DownloadService)
 
   constructor(private readonly playerService: PlayerService) {
+    // Close delete confirmation on outside click
+    if (typeof document !== 'undefined') {
+      document.addEventListener('click', () => {
+        if (this.isConfirmingDelete) {
+          this.isConfirmingDelete = false
+        }
+      })
+    }
+
+    // Register Media Session action handlers
+    this.mediaSessionService.registerHandlers({
+      play: () => {
+        if (this.lastState?.content) {
+          this.playerService.performAction('play', this.lastState.content)
+        }
+      },
+      pause: () => this.playerService.performAction('pause'),
+      seekbackward: () => {
+        if (!this.audioElement) return
+        const time = Math.max(0, this.audioElement.currentTime - 15)
+        this.playerService.performAction('seek', undefined, time)
+        if (this.audioElement) this.audioElement.currentTime = time
+      },
+      seekforward: () => {
+        if (!this.audioElement) return
+        const time = Math.min(this.duration, this.audioElement.currentTime + 15)
+        this.playerService.performAction('seek', undefined, time)
+        if (this.audioElement) this.audioElement.currentTime = time
+      },
+      seek: (seconds: number) => {
+        const time = Math.max(0, Math.min(this.duration, seconds))
+        this.playerService.performAction('seek', undefined, time)
+        if (this.audioElement) this.audioElement.currentTime = time
+      }
+    })
+
     this.playerService
       .getState()
       .pipe(takeUntilDestroyed())
@@ -43,6 +88,13 @@ export class EpisodePlayerComponent {
         this.lastState = state
         this.currentContent = state.content
         this.isPlaying = state.isPlaying
+
+        // Update Media Session metadata and playback state
+        if (state.content) {
+          this.mediaSessionService.setMetadata(state.content)
+          this.mediaSessionService.setPlaybackState(state.isPlaying ? 'playing' : 'paused')
+        }
+
         this.syncAudio()
       })
   }
@@ -60,6 +112,8 @@ export class EpisodePlayerComponent {
 
   onMetadata(): void {
     this.duration = this.audioElement?.duration ?? 0
+    // Report initial position state to OS media panel
+    this.mediaSessionService.setPositionState(this.duration, this.audioElement?.currentTime ?? 0)
     this.syncAudio()  // audio is now seekable — apply saved position
   }
 
@@ -74,6 +128,12 @@ export class EpisodePlayerComponent {
     const position = this.audioElement.currentTime
     if (Math.abs(position - this.lastState.currentTime) > 1) {
       this.playerService.performAction('seek', undefined, position)
+    }
+
+    // Update OS media scrubber when position changes by >2 seconds
+    if (Math.abs(position - this.lastReportedPosition) > 2) {
+      this.mediaSessionService.setPositionState(this.duration, position)
+      this.lastReportedPosition = position
     }
   }
 
@@ -91,6 +151,36 @@ export class EpisodePlayerComponent {
     this.playerService.performAction('stop')
   }
 
+  startDownload(): void {
+    if (!this.currentContent) return
+    void this.downloadService.startDownload(this.currentContent)
+  }
+
+  downloadPointerDown(event: PointerEvent): void {
+    if (this.isConfirmingDelete) {
+      // Already confirming; tap elsewhere clears it
+      event.stopPropagation()
+      return
+    }
+    this.downloadLongPressTimer = window.setTimeout(() => {
+      this.isConfirmingDelete = true
+    }, this.LONG_PRESS_MS)
+  }
+
+  downloadPointerUp(): void {
+    if (this.downloadLongPressTimer !== null) {
+      clearTimeout(this.downloadLongPressTimer)
+      this.downloadLongPressTimer = null
+    }
+  }
+
+  async confirmDelete(): Promise<void> {
+    if (!this.currentContent) return
+    await this.downloadService.deleteDownload(this.currentContent.id)
+    this.isConfirmingDelete = false
+    // Audio will re-sync on next timeupdate since blob URL is now gone
+  }
+
   private syncAudio(): void {
     if (!this.audioElement || !this.lastState) return
 
@@ -106,10 +196,12 @@ export class EpisodePlayerComponent {
       return
     }
 
-    if (this.activeLink !== content.link) {
-      this.audioElement.src = content.link
+    // Prefer blob URL if episode is downloaded; fall back to stream URL
+    const resolvedLink = this.downloadService.getBlobUrl(content.id) ?? content.link
+    if (this.activeLink !== resolvedLink) {
+      this.audioElement.src = resolvedLink
       this.audioElement.load()
-      this.activeLink = content.link
+      this.activeLink = resolvedLink
     }
 
     if (Math.abs(this.audioElement.currentTime - currentTime) > 1) {
