@@ -50,6 +50,13 @@ export class AudioAnalysisSource implements ColorSource {
     // triggered by a user clicking an episode, so this is safe and necessary.
     void this.audioContext.resume()
 
+    // Recover immediately when the browser auto-suspends us (background tab policy)
+    this.audioContext.addEventListener('statechange', () => {
+      if (this.audioContext?.state === 'suspended') {
+        void this.audioContext?.resume()
+      }
+    })
+
     this.analyser = this.audioContext.createAnalyser()
     this.analyser.fftSize = 256
 

@@ -74,6 +74,7 @@ export class EpisodePlayerComponent implements OnDestroy {
         } else {
           // Keep audio playing even when page goes to background
           // The MediaSession API handles lock screen controls
+          this.audioAnalysis.resume()  // ensure AudioContext is running before play
           if (this.audioElement?.paused && this.lastState?.isPlaying) {
             // Page came back to foreground and audio was paused - resume
             void this.audioElement.play()
@@ -138,6 +139,7 @@ export class EpisodePlayerComponent implements OnDestroy {
       this.playerService.performAction('pause')
     } else {
       this.playerService.performAction('play', this.lastState.content ?? undefined)
+      void this._pipVideo?.play()  // iOS requires user-gesture to start video
     }
   }
 
@@ -202,7 +204,6 @@ export class EpisodePlayerComponent implements OnDestroy {
 
     video.srcObject = canvas.captureStream(25)
     video.muted = true
-    void video.play()
 
     this.audioAnalysis.frequencyData$
       .pipe(takeUntilDestroyed(this._destroyRef))
