@@ -101,10 +101,12 @@
     <!-- Native audio element — hidden in non-legacy themes; legacy CSS shows it with controls -->
     <audio #audioPlayer
       controls
+      playsinline
       crossorigin="anonymous"
       (timeupdate)="onTimeUpdate()"
       (loadedmetadata)="onMetadata()"
       (ended)="onAudioEnded()"
+      (playing)="onAudioPlaying()"
       style="display:none">
       <source [src]="currentContent.link" type="audio/mpeg">
     </audio>

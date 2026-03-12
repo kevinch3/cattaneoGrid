@@ -95,10 +95,13 @@ export class EpisodePlayerComponent {
         this.currentContent = state.content
         this.isPlaying = state.isPlaying
 
-        // Update Media Session metadata and playback state
+        // Update Media Session metadata; defer playback state to onAudioPlaying()
+        // so it's set only after the audio element actually starts output (race condition fix).
         if (state.content) {
           this.mediaSessionService.setMetadata(state.content)
-          this.mediaSessionService.setPlaybackState(state.isPlaying ? 'playing' : 'paused')
+          if (!state.isPlaying) {
+            this.mediaSessionService.setPlaybackState('paused')
+          }
         }
 
         this.syncAudio()
@@ -155,6 +158,13 @@ export class EpisodePlayerComponent {
 
   onAudioEnded(): void {
     this.playerService.performAction('stop')
+  }
+
+  onAudioPlaying(): void {
+    // The audio element has actually started output — now safe to signal iOS
+    // that the background audio session should remain active.
+    this.mediaSessionService.setPlaybackState('playing')
+    this.audioAnalysis.resume()  // keep AudioContext alive when page backgrounds
   }
 
   startDownload(): void {
