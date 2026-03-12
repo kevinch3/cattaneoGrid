@@ -42,6 +42,24 @@ export class EpisodePlayerComponent {
   protected readonly downloadService = inject(DownloadService)
 
   constructor(private readonly playerService: PlayerService) {
+    // iOS Safari: pre-unlock AudioContext on first user gesture, before
+    // Angular CD fires the @ViewChild setter and calls connect()
+    if (typeof document !== 'undefined') {
+      document.addEventListener('pointerdown', () => this.audioAnalysis.resume(), { once: true })
+    }
+
+    // Handle background playback: prevent pause when page visibility changes
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        // Keep audio playing even when page goes to background
+        // The MediaSession API handles lock screen controls
+        if (!document.hidden && this.audioElement?.paused && this.lastState?.isPlaying) {
+          // Page came back to foreground and audio was paused - resume
+          void this.audioElement.play()
+        }
+      })
+    }
+
     // Register Media Session action handlers
     this.mediaSessionService.registerHandlers({
       play: () => {

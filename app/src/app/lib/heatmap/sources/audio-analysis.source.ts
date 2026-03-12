@@ -63,7 +63,10 @@ export class AudioAnalysisSource implements ColorSource {
 
   /** Call from a user-gesture handler (e.g. play button) to keep the context running. */
   resume(): void {
-    void this.audioContext?.resume()
+    if (!this.audioContext) {
+      this.audioContext = new AudioContext()
+    }
+    void this.audioContext.resume()
   }
 
   getAnalyserNode(): AnalyserNode | null {

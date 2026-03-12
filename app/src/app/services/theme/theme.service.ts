@@ -49,7 +49,7 @@ export class ThemeService {
     // Watch resolved mode changes to update data-mode on body
     effect(() => {
       const mode = this._resolvedMode()
-      if (typeof document !== 'undefined') {
+      if (document?.body) {
         document.body.setAttribute('data-mode', mode)
       }
     })
@@ -93,6 +93,8 @@ export class ThemeService {
   private applyPreset(): void {
     const preset = this._activePreset()
     this.updateResolvedMode(preset.mode)
+    if (!document?.body) return
+
     document.body.setAttribute('data-theme', preset.style)
 
     const href = `/assets/themes/theme-${preset.style}.css`
