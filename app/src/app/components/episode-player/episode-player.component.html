@@ -33,27 +33,28 @@
       @let progress = downloadService.progress().get(currentContent.id);
       @let isDownloaded = downloadService.downloaded().has(currentContent.id);
       @switch (true) {
-        <!-- Downloaded state with long-press delete -->
+        <!-- Downloaded state with hover-to-remove -->
         @case (isDownloaded) {
-          <div class="download-btn-wrapper"
-            (pointerdown)="downloadPointerDown($event)"
-            (pointerup)="downloadPointerUp()"
-            (pointerleave)="downloadPointerUp()">
-            <button class="download-btn downloaded" aria-label="Downloaded - long press to delete">
+          <div class="download-btn-wrapper" (mouseleave)="isConfirmingDelete = false">
+            <button class="download-btn downloaded" aria-label="Downloaded - hover to remove">
               <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
                 <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
               </svg>
             </button>
             @if (isConfirmingDelete) {
-              <button class="delete-confirm-btn" (click)="confirmDelete()" aria-label="Delete download">
+              <button class="delete-confirm-btn" (click)="confirmDelete()" aria-label="Confirm delete">
                 ✕ Remove
+              </button>
+            } @else {
+              <button class="remove-btn" (click)="isConfirmingDelete = true" aria-label="Remove download">
+                Remove
               </button>
             }
           </div>
         }
-        <!-- Downloading state -->
+        <!-- Downloading state - click to cancel -->
         @case (typeof progress === 'number') {
-          <button class="download-btn downloading" aria-label="Downloading...">
+          <button class="download-btn downloading" (click)="cancelDownload()" aria-label="Cancel download">
             @if (progress >= 0) {
               <span class="progress-text">{{ progress }}%</span>
             } @else {

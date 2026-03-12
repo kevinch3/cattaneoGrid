@@ -156,7 +156,7 @@
   }
 }
 
-/* ── Download button with long-press delete ─────────────────────────── */
+/* ── Download button with hover-to-remove ─────────────────────────── */
 .download-btn-wrapper {
   display: flex;
   align-items: center;
@@ -199,6 +199,24 @@
   .progress-text {
     font-size: 10px;
     font-weight: 600;
+  }
+}
+
+.remove-btn {
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: var(--player-radius, 4px);
+  background: transparent;
+  color: var(--text, #666);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text, #222);
   }
 }
 

@@ -33,9 +33,6 @@ export class EpisodePlayerComponent {
   showVisualizer: boolean = false
   isConfirmingDelete: boolean = false
 
-  private downloadLongPressTimer: number | null = null
-  private readonly LONG_PRESS_MS = 500
-
   private audioElement: HTMLAudioElement | null = null
   private lastState: PlayerState | null = null
   private activeLink: string | null = null
@@ -45,15 +42,6 @@ export class EpisodePlayerComponent {
   protected readonly downloadService = inject(DownloadService)
 
   constructor(private readonly playerService: PlayerService) {
-    // Close delete confirmation on outside click
-    if (typeof document !== 'undefined') {
-      document.addEventListener('click', () => {
-        if (this.isConfirmingDelete) {
-          this.isConfirmingDelete = false
-        }
-      })
-    }
-
     // Register Media Session action handlers
     this.mediaSessionService.registerHandlers({
       play: () => {
@@ -156,22 +144,9 @@ export class EpisodePlayerComponent {
     void this.downloadService.startDownload(this.currentContent)
   }
 
-  downloadPointerDown(event: PointerEvent): void {
-    if (this.isConfirmingDelete) {
-      // Already confirming; tap elsewhere clears it
-      event.stopPropagation()
-      return
-    }
-    this.downloadLongPressTimer = window.setTimeout(() => {
-      this.isConfirmingDelete = true
-    }, this.LONG_PRESS_MS)
-  }
-
-  downloadPointerUp(): void {
-    if (this.downloadLongPressTimer !== null) {
-      clearTimeout(this.downloadLongPressTimer)
-      this.downloadLongPressTimer = null
-    }
+  cancelDownload(): void {
+    if (!this.currentContent) return
+    this.downloadService.cancelDownload(this.currentContent.id)
   }
 
   async confirmDelete(): Promise<void> {
