@@ -53,7 +53,11 @@ export class EpisodePlayerComponent {
     // Handle background playback: prevent pause when page visibility changes
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
+        if (document.hidden) {
+          // Page backgrounded: stop analysis and close visualizer to free resources
+          this.audioAnalysis.stopAnalysis()
+          this.showVisualizer = false
+        } else {
           // Keep audio playing even when page goes to background
           // The MediaSession API handles lock screen controls
           this.audioAnalysis.resume()  // ensure AudioContext is running before play
@@ -121,6 +125,15 @@ export class EpisodePlayerComponent {
       this.playerService.performAction('pause')
     } else {
       this.playerService.performAction('play', this.lastState.content ?? undefined)
+    }
+  }
+
+  toggleVisualizer(): void {
+    this.showVisualizer = !this.showVisualizer
+    if (this.showVisualizer) {
+      this.audioAnalysis.startAnalysis()
+    } else {
+      this.audioAnalysis.stopAnalysis()
     }
   }
 

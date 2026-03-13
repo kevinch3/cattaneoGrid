@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { AudioAnalysisSource } from './audio-analysis.source'
+import { vi } from 'vitest'
 
 describe('AudioAnalysisSource', () => {
   let service: AudioAnalysisSource
@@ -23,19 +24,20 @@ describe('AudioAnalysisSource', () => {
     it('should call captureStream when available', () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
+      const captureSpy = vi.fn().mockReturnValue(mockStream)
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = captureSpy
 
       service.connect(mockAudio)
 
-      expect((mockAudio as any).captureStream).toHaveBeenCalled()
+      expect(captureSpy).toHaveBeenCalled()
     })
 
     it('should create analyser node', () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
@@ -46,7 +48,7 @@ describe('AudioAnalysisSource', () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
@@ -87,7 +89,7 @@ describe('AudioAnalysisSource', () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
@@ -96,58 +98,115 @@ describe('AudioAnalysisSource', () => {
   })
 
   describe('events$ observable', () => {
-    it('should emit events after connect', (done: DoneFn) => {
+    it('should NOT emit events after connect alone (analysis is off by default)', async () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
       let emitted = false
       const sub = service.events$.subscribe(() => {
         emitted = true
-        sub.unsubscribe()
-        service.disconnect()
-        done()
       })
 
-      setTimeout(() => {
-        if (!emitted) {
-          sub.unsubscribe()
-          service.disconnect()
-          done()
-        }
-      }, 150)
+      await new Promise(resolve => setTimeout(resolve, 150))
+      expect(emitted).toBe(false)
+      sub.unsubscribe()
+      service.disconnect()
+    })
+
+    it('should emit events after startAnalysis is called', async () => {
+      const mockAudio = document.createElement('audio')
+      const mockStream = new MediaStream()
+
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
+
+      service.connect(mockAudio)
+      service.startAnalysis()
+
+      let emitted = false
+      const sub = service.events$.subscribe(() => {
+        emitted = true
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 150))
+      expect(emitted).toBe(true)
+      sub.unsubscribe()
+      service.disconnect()
     })
   })
 
   describe('frequencyData$ observable', () => {
-    it('should emit frequency data after connect', (done: DoneFn) => {
+    it('should NOT emit frequency data after connect alone (analysis is off by default)', async () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
       let emitted = false
-      const sub = service.frequencyData$.subscribe((data) => {
-        expect(data).toBeInstanceOf(Uint8Array)
-        expect(data.length).toBeGreaterThan(0)
+      const sub = service.frequencyData$.subscribe(() => {
         emitted = true
-        sub.unsubscribe()
-        service.disconnect()
-        done()
       })
 
-      setTimeout(() => {
-        if (!emitted) {
-          sub.unsubscribe()
-          service.disconnect()
-          done()
-        }
-      }, 150)
+      await new Promise(resolve => setTimeout(resolve, 150))
+      expect(emitted).toBe(false)
+      sub.unsubscribe()
+      service.disconnect()
+    })
+
+    it('should emit frequency data after startAnalysis', async () => {
+      const mockAudio = document.createElement('audio')
+      const mockStream = new MediaStream()
+
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
+
+      service.connect(mockAudio)
+      service.startAnalysis()
+
+      let emitted = false
+      let lastData: Uint8Array | null = null
+      const sub = service.frequencyData$.subscribe((data) => {
+        emitted = true
+        lastData = data
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 150))
+      expect(emitted).toBe(true)
+      expect(lastData).toBeInstanceOf(Uint8Array)
+      expect((lastData as Uint8Array | null)?.length ?? 0).toBeGreaterThan(0)
+      sub.unsubscribe()
+      service.disconnect()
+    })
+
+    it('should stop emitting frequency data after stopAnalysis', async () => {
+      const mockAudio = document.createElement('audio')
+      const mockStream = new MediaStream()
+
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
+
+      service.connect(mockAudio)
+      service.startAnalysis()
+
+      let emissionCount = 0
+      const sub = service.frequencyData$.subscribe(() => {
+        emissionCount++
+      })
+
+      await new Promise(resolve => setTimeout(resolve, 100))
+      const emissionsBeforeStop = emissionCount
+
+      service.stopAnalysis()
+
+      await new Promise(resolve => setTimeout(resolve, 100))
+      const emissionsAfterStop = emissionCount - emissionsBeforeStop
+
+      expect(emissionsAfterStop).toBeLessThan(2)
+      sub.unsubscribe()
+      service.disconnect()
     })
   })
 
@@ -156,7 +215,7 @@ describe('AudioAnalysisSource', () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
@@ -184,13 +243,14 @@ describe('AudioAnalysisSource', () => {
       service.disconnect()
     })
 
-    it('should pause analysis when page backgrounded', (done) => {
+    it('should stop analysis when stopAnalysis is called (including on background)', async () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
+      service.startAnalysis()
 
       // Initially analysis is running and emitting
       let emissionCount = 0
@@ -198,46 +258,26 @@ describe('AudioAnalysisSource', () => {
         emissionCount++
       })
 
-      setTimeout(() => {
-        const emissionsBeforePause = emissionCount
+      await new Promise(resolve => setTimeout(resolve, 50))
+      const emissionsBeforeStop = emissionCount
 
-        // Simulate page backgrounding
-        Object.defineProperty(document, 'hidden', {
-          configurable: true,
-          get: () => true
-        })
-        document.dispatchEvent(new Event('visibilitychange'))
+      // Simulate stopping analysis (what episode-player does on visibilitychange/hidden)
+      service.stopAnalysis()
 
-        setTimeout(() => {
-          const emissionsDuringPause = emissionCount - emissionsBeforePause
+      await new Promise(resolve => setTimeout(resolve, 50))
+      const emissionsDuringStop = emissionCount - emissionsBeforeStop
 
-          // Analysis should stop emitting when backgrounded (or emit very little)
-          expect(emissionsDuringPause).toBeLessThan(2)
+      // Analysis should stop emitting when stopped (or emit very little)
+      expect(emissionsDuringStop).toBeLessThan(2)
 
-          // Restore visibility
-          Object.defineProperty(document, 'hidden', {
-            configurable: true,
-            get: () => false
-          })
-          document.dispatchEvent(new Event('visibilitychange'))
-
-          setTimeout(() => {
-            // Analysis should resume emitting after page comes back
-            const emissionsAfterResume = emissionCount - emissionsBeforePause - emissionsDuringPause
-            expect(emissionsAfterResume).toBeGreaterThan(0)
-
-            subscription.unsubscribe()
-            done()
-          }, 50)
-        }, 50)
-      }, 50)
+      subscription.unsubscribe()
     })
 
     it('should guarantee background playback never breaks due to analysis', () => {
       const mockAudio = document.createElement('audio')
       const mockStream = new MediaStream()
 
-      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+      ;(mockAudio as any).captureStream = vi.fn().mockReturnValue(mockStream)
 
       service.connect(mockAudio)
 
