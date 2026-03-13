@@ -1,5 +1,5 @@
 // app/src/app/components/episode-player/episode-player.component.ts
-import { Component, ElementRef, ViewChild, inject, DestroyRef, OnDestroy } from '@angular/core'
+import { Component, ElementRef, ViewChild, inject, DestroyRef } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { PlayerService } from '../../services/player/player.service'
 import { PlayableContent, PlayerState } from '../../models/playable.model'
@@ -15,7 +15,7 @@ import { DownloadService } from '../../services/download/download.service'
   templateUrl: './episode-player.component.html',
   styleUrl: './episode-player.component.scss'
 })
-export class EpisodePlayerComponent implements OnDestroy {
+export class EpisodePlayerComponent {
   @ViewChild('audioPlayer')
   set audioPlayerRef(ref: ElementRef<HTMLAudioElement> | undefined) {
     this.audioElement = ref?.nativeElement ?? null
@@ -23,14 +23,6 @@ export class EpisodePlayerComponent implements OnDestroy {
       this.audioAnalysis.connect(this.audioElement)
     }
     this.syncAudio()
-  }
-
-  @ViewChild('pipVideo')
-  set pipVideoRef(ref: ElementRef<HTMLVideoElement> | undefined) {
-    if (ref?.nativeElement && !this._pipCanvas) {
-      this._pipVideo = ref.nativeElement
-      this._initPip()
-    }
   }
 
   currentContent: PlayableContent | null = null
@@ -50,11 +42,6 @@ export class EpisodePlayerComponent implements OnDestroy {
   protected readonly downloadService = inject(DownloadService)
 
   private readonly _destroyRef = inject(DestroyRef)
-  private _pipCanvas: HTMLCanvasElement | null = null
-  private _pipCtx: CanvasRenderingContext2D | null = null
-  private _pipVideo: HTMLVideoElement | null = null
-  private _pipFreqData: Uint8Array = new Uint8Array(128)
-  readonly pipSupported = typeof document !== 'undefined' && !!document.pictureInPictureEnabled
 
   constructor(private readonly playerService: PlayerService) {
     // iOS Safari: pre-unlock AudioContext on first user gesture, before
@@ -66,12 +53,7 @@ export class EpisodePlayerComponent implements OnDestroy {
     // Handle background playback: prevent pause when page visibility changes
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          // iOS handles PiP natively; this call helps Chrome/Android
-          if (this.isPlaying && this._pipVideo && this.pipSupported) {
-            void this._pipVideo.requestPictureInPicture?.().catch(() => {})
-          }
-        } else {
+        if (!document.hidden) {
           // Keep audio playing even when page goes to background
           // The MediaSession API handles lock screen controls
           this.audioAnalysis.resume()  // ensure AudioContext is running before play
@@ -139,7 +121,6 @@ export class EpisodePlayerComponent implements OnDestroy {
       this.playerService.performAction('pause')
     } else {
       this.playerService.performAction('play', this.lastState.content ?? undefined)
-      void this._pipVideo?.play()  // iOS requires user-gesture to start video
     }
   }
 
@@ -189,70 +170,6 @@ export class EpisodePlayerComponent implements OnDestroy {
     // that the background audio session should remain active.
     this.mediaSessionService.setPlaybackState('playing')
     this.audioAnalysis.resume()  // keep AudioContext alive when page backgrounds
-    void this._pipVideo?.play()   // keep PiP video in sync
-  }
-
-  private _initPip(): void {
-    const video = this._pipVideo
-    if (!video) return
-
-    // Guard against browsers that don't support captureStream (iOS Safari)
-    const testCanvas = document.createElement('canvas')
-    if (typeof (testCanvas as any).captureStream !== 'function') return
-
-    const canvas = document.createElement('canvas')
-    canvas.width = 320
-    canvas.height = 90
-    this._pipCanvas = canvas
-    this._pipCtx = canvas.getContext('2d')
-
-    video.srcObject = canvas.captureStream(25)
-    video.muted = true
-
-    this.audioAnalysis.frequencyData$
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe(data => {
-        this._pipFreqData = data
-        this._drawPipFrame()
-      })
-  }
-
-  private _drawPipFrame(): void {
-    const ctx = this._pipCtx
-    const canvas = this._pipCanvas
-    if (!ctx || !canvas) return
-    const W = canvas.width, H = canvas.height
-
-    ctx.fillStyle = '#0a0a0a'
-    ctx.fillRect(0, 0, W, H)
-
-    const title = this.currentContent?.title ?? ''
-    ctx.fillStyle = '#ffffff'
-    ctx.font = '11px system-ui, sans-serif'
-    ctx.save()
-    ctx.rect(8, 0, W - 16, 20)
-    ctx.clip()
-    ctx.fillText(title, 8, 14)
-    ctx.restore()
-
-    const BAR_COUNT = 64
-    const barW = W / BAR_COUNT
-    const barAreaH = 70
-    for (let i = 0; i < BAR_COUNT; i++) {
-      const v = (this._pipFreqData[i] ?? 0) / 255
-      const bh = v * barAreaH
-      ctx.fillStyle = `hsl(${Math.round((i / BAR_COUNT) * 240)}, 80%, 55%)`
-      ctx.fillRect(Math.floor(i * barW), H - bh, Math.max(1, Math.floor(barW) - 1), bh)
-    }
-  }
-
-  togglePip(): void {
-    if (!this._pipVideo) return
-    if (document.pictureInPictureElement) {
-      void document.exitPictureInPicture().catch(() => {})
-    } else {
-      void this._pipVideo.requestPictureInPicture?.().catch(() => {})
-    }
   }
 
   startDownload(): void {
@@ -303,16 +220,6 @@ export class EpisodePlayerComponent implements OnDestroy {
       void this.audioElement.play()
     } else if (!isPlaying && !this.audioElement.paused) {
       this.audioElement.pause()
-      this._pipVideo?.pause()
     }
-  }
-
-  ngOnDestroy(): void {
-    if (this._pipVideo) {
-      this._pipVideo.srcObject = null
-      this._pipVideo = null
-    }
-    this._pipCanvas = null
-    this._pipCtx = null
   }
 }
