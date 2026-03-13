@@ -27,6 +27,7 @@ export class AudioAnalysisSource implements ColorSource {
   private audioContext: AudioContext | null = null
   private analyser: AnalyserNode | null = null
   private source: MediaStreamAudioSourceNode | null = null
+  private silentGain: GainNode | null = null
   private rafId: number | null = null
   private lastEnergy: number = 0
   private smoothedEnergy: number = 0   // EMA-smoothed energy
@@ -53,17 +54,19 @@ export class AudioAnalysisSource implements ColorSource {
     this.analyser = this.audioContext.createAnalyser()
     this.analyser.fftSize = 256
 
-    // Use captureStream() to get a copy of audio for analysis without routing
-    // through the suspended AudioContext. Native <audio> element stays independent.
+    // Use captureStream() to get a copy of audio for analysis without affecting
+    // the native <audio> element's playback path. A silent GainNode (gain=0) keeps
+    // the Web Audio graph connected to the destination (required for analyser data
+    // to flow) without producing any audible output from this path.
     // On iOS Safari where captureStream is unavailable, analysis is silently skipped.
     const stream = (audioElement as any).captureStream?.()
     if (stream) {
       this.source = this.audioContext.createMediaStreamSource(stream)
+      this.silentGain = this.audioContext.createGain()
+      this.silentGain.gain.value = 0
       this.source.connect(this.analyser)
-      // Connect to destination to ensure audio flows through analyser for frequency data.
-      // The captured stream is a copy only; the original <audio> element plays independently
-      // and is unaffected by the destination being suspended in the background.
-      this.analyser.connect(this.audioContext.destination)
+      this.analyser.connect(this.silentGain)
+      this.silentGain.connect(this.audioContext.destination)
     } else {
       // captureStream not available (iOS Safari)
       this.source = null
@@ -133,6 +136,10 @@ export class AudioAnalysisSource implements ColorSource {
       this.rafId = null
     }
     this.connected = false
+    this.source?.disconnect()
+    this.analyser?.disconnect()
+    this.silentGain?.disconnect()
+    this.silentGain = null
   }
 
   destroy(): void {

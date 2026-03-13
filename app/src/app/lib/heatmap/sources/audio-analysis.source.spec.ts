@@ -162,8 +162,8 @@ describe('AudioAnalysisSource', () => {
 
       // When connected with captureStream:
       // - Original <audio> element plays independently (HTML5 native)
-      // - Captured stream copy routes: source → analyser → destination
-      // - This allows frequency data to flow while keeping native audio unaffected
+      // - Captured stream copy routes: source → analyser → silentGain(0) → destination
+      // - Analyser receives data without producing audible output through the AudioContext
       expect(service.getAnalyserNode()).toBeTruthy()
 
       service.disconnect()
