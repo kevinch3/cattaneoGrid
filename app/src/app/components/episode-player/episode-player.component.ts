@@ -1,17 +1,15 @@
 // app/src/app/components/episode-player/episode-player.component.ts
-import { Component, ElementRef, ViewChild, inject, DestroyRef } from '@angular/core'
+import { Component, ElementRef, ViewChild, inject } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { PlayerService } from '../../services/player/player.service'
 import { PlayableContent, PlayerState } from '../../models/playable.model'
-import { AudioAnalysisSource } from '../../lib/heatmap'
-import { VisualizerComponent } from '../visualizer/visualizer.component'
 import { MediaSessionService } from '../../services/media-session/media-session.service'
 import { DownloadService } from '../../services/download/download.service'
 
 @Component({
   selector: 'app-episode-player',
   standalone: true,
-  imports: [VisualizerComponent],
+  imports: [],
   templateUrl: './episode-player.component.html',
   styleUrl: './episode-player.component.scss'
 })
@@ -19,9 +17,6 @@ export class EpisodePlayerComponent {
   @ViewChild('audioPlayer')
   set audioPlayerRef(ref: ElementRef<HTMLAudioElement> | undefined) {
     this.audioElement = ref?.nativeElement ?? null
-    if (this.audioElement) {
-      this.audioAnalysis.connect(this.audioElement)
-    }
     this.syncAudio()
   }
 
@@ -30,41 +25,22 @@ export class EpisodePlayerComponent {
   duration: number = 0           // seconds, populated on loadedmetadata
   isPlaying: boolean = false
   isDragging: boolean = false    // true while user scrubs; pauses timeupdate syncing
-  showVisualizer: boolean = false
   isConfirmingDelete: boolean = false
 
   private audioElement: HTMLAudioElement | null = null
   private lastState: PlayerState | null = null
   private activeLink: string | null = null
   private lastReportedPosition = 0
-  private readonly audioAnalysis = inject(AudioAnalysisSource)
   private readonly mediaSessionService = inject(MediaSessionService)
   protected readonly downloadService = inject(DownloadService)
 
-  private readonly _destroyRef = inject(DestroyRef)
-
   constructor(private readonly playerService: PlayerService) {
-    // iOS Safari: pre-unlock AudioContext on first user gesture, before
-    // Angular CD fires the @ViewChild setter and calls connect()
-    if (typeof document !== 'undefined') {
-      document.addEventListener('pointerdown', () => this.audioAnalysis.resume(), { once: true })
-    }
-
-    // Handle background playback: prevent pause when page visibility changes
+    // Handle background playback: resume audio when page returns to foreground
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          // Page backgrounded: stop analysis and close visualizer to free resources
-          this.audioAnalysis.stopAnalysis()
-          this.showVisualizer = false
-        } else {
-          // Keep audio playing even when page goes to background
-          // The MediaSession API handles lock screen controls
-          this.audioAnalysis.resume()  // ensure AudioContext is running before play
-          if (this.audioElement?.paused && this.lastState?.isPlaying) {
-            // Page came back to foreground and audio was paused - resume
-            void this.audioElement.play()
-          }
+        if (!document.hidden && this.audioElement?.paused && this.lastState?.isPlaying) {
+          // Page returned to foreground and audio was paused - resume
+          void this.audioElement.play()
         }
       })
     }
@@ -119,21 +95,10 @@ export class EpisodePlayerComponent {
 
   togglePlay(): void {
     if (!this.lastState) return
-    // Keep AudioContext running — browsers may re-suspend it; this is a user gesture.
-    this.audioAnalysis.resume()
     if (this.lastState.isPlaying) {
       this.playerService.performAction('pause')
     } else {
       this.playerService.performAction('play', this.lastState.content ?? undefined)
-    }
-  }
-
-  toggleVisualizer(): void {
-    this.showVisualizer = !this.showVisualizer
-    if (this.showVisualizer) {
-      this.audioAnalysis.startAnalysis()
-    } else {
-      this.audioAnalysis.stopAnalysis()
     }
   }
 
@@ -182,7 +147,6 @@ export class EpisodePlayerComponent {
     // The audio element has actually started output — now safe to signal iOS
     // that the background audio session should remain active.
     this.mediaSessionService.setPlaybackState('playing')
-    this.audioAnalysis.resume()  // keep AudioContext alive when page backgrounds
   }
 
   startDownload(): void {
