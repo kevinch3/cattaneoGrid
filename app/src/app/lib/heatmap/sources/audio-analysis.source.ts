@@ -34,9 +34,23 @@ export class AudioAnalysisSource implements ColorSource {
   private frameCount: number = 0       // used to throttle emission to ~20fps
   private connected = false
   private _destroyed = false
+  private shouldAnalyze = false        // true if analysis should be running (paused while backgrounded)
 
   constructor() {
     this.destroyRef.onDestroy(() => this.destroy())
+
+    // Pause analysis when page backgrounded to prevent breaking background audio playback
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && this.connected) {
+          // Page backgrounded: pause analysis to free AudioContext resources
+          this.pauseAnalysis()
+        } else if (!document.hidden && !this.connected) {
+          // Page returned to foreground: resume analysis if it was running
+          this.resumeAnalysis()
+        }
+      })
+    }
   }
 
   connect(audioElement: HTMLAudioElement): void {
@@ -73,6 +87,7 @@ export class AudioAnalysisSource implements ColorSource {
     }
 
     this.connected = true
+    this.shouldAnalyze = true
     this.startLoop(this.ngZone)
   }
 
@@ -140,6 +155,24 @@ export class AudioAnalysisSource implements ColorSource {
     this.analyser?.disconnect()
     this.silentGain?.disconnect()
     this.silentGain = null
+  }
+
+  /** Pause analysis when page is backgrounded (preserves audio playback). */
+  private pauseAnalysis(): void {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId)
+      this.rafId = null
+    }
+    this.connected = false
+    // Don't disconnect Web Audio nodes — keep the graph intact for resume
+  }
+
+  /** Resume analysis when page returns to foreground. */
+  private resumeAnalysis(): void {
+    if (this.shouldAnalyze && !this.connected && this.analyser) {
+      this.connected = true
+      this.startLoop(this.ngZone)
+    }
   }
 
   destroy(): void {

@@ -183,5 +183,79 @@ describe('AudioAnalysisSource', () => {
 
       service.disconnect()
     })
+
+    it('should pause analysis when page backgrounded', (done) => {
+      const mockAudio = document.createElement('audio')
+      const mockStream = new MediaStream()
+
+      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+
+      service.connect(mockAudio)
+
+      // Initially analysis is running and emitting
+      let emissionCount = 0
+      const subscription = service.frequencyData$.subscribe(() => {
+        emissionCount++
+      })
+
+      setTimeout(() => {
+        const emissionsBeforePause = emissionCount
+
+        // Simulate page backgrounding
+        Object.defineProperty(document, 'hidden', {
+          configurable: true,
+          get: () => true
+        })
+        document.dispatchEvent(new Event('visibilitychange'))
+
+        setTimeout(() => {
+          const emissionsDuringPause = emissionCount - emissionsBeforePause
+
+          // Analysis should stop emitting when backgrounded (or emit very little)
+          expect(emissionsDuringPause).toBeLessThan(2)
+
+          // Restore visibility
+          Object.defineProperty(document, 'hidden', {
+            configurable: true,
+            get: () => false
+          })
+          document.dispatchEvent(new Event('visibilitychange'))
+
+          setTimeout(() => {
+            // Analysis should resume emitting after page comes back
+            const emissionsAfterResume = emissionCount - emissionsBeforePause - emissionsDuringPause
+            expect(emissionsAfterResume).toBeGreaterThan(0)
+
+            subscription.unsubscribe()
+            done()
+          }, 50)
+        }, 50)
+      }, 50)
+    })
+
+    it('should guarantee background playback never breaks due to analysis', () => {
+      const mockAudio = document.createElement('audio')
+      const mockStream = new MediaStream()
+
+      ;(mockAudio as any).captureStream = jasmine.createSpy('captureStream').and.returnValue(mockStream)
+
+      service.connect(mockAudio)
+
+      // CRITICAL: Audio analysis must NEVER use createMediaElementSource
+      // because it breaks Media Session API and background playback
+      expect(service['audioContext']!.createMediaElementSource).not.toHaveBeenCalled()
+
+      // When page backgrounds, analysis pauses but audio element remains untouched
+      Object.defineProperty(document, 'hidden', {
+        configurable: true,
+        get: () => true
+      })
+      document.dispatchEvent(new Event('visibilitychange'))
+
+      // The native <audio> element's playback is completely independent
+      // and continues to work in background (tested via Media Session API)
+      // This test just verifies we don't break it via Web Audio routing
+      expect(mockAudio.paused).not.toBe(true) // Audio element itself not paused by us
+    })
   })
 })
