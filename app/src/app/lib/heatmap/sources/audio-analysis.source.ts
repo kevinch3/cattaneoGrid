@@ -60,7 +60,10 @@ export class AudioAnalysisSource implements ColorSource {
     if (stream) {
       this.source = this.audioContext.createMediaStreamSource(stream)
       this.source.connect(this.analyser)
-      // Don't connect analyser to destination — native audio element handles playback
+      // Connect to destination to ensure audio flows through analyser for frequency data.
+      // The captured stream is a copy only; the original <audio> element plays independently
+      // and is unaffected by the destination being suspended in the background.
+      this.analyser.connect(this.audioContext.destination)
     } else {
       // captureStream not available (iOS Safari)
       this.source = null
