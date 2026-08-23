@@ -1,4 +1,22 @@
-import{$ as De,A as q,B as j,C as L,D as N,E as ee,F as s,G as l,H as g,I as b,J as Y,K as Se,L as S,M as d,P as xe,Q as ye,R as Ae,S as _,T as P,U as u,V as G,W as O,X as ne,Y as ae,Z,a as H,aa as fe,b as B,ba as ie,c as C,ca as be,d as me,da as Ce,e as ue,ea as ve,f as he,fa as Pe,g as pe,h as f,i as h,j as p,k,l as M,m as U,n as X,o as A,p as J,q as de,r as ke,s as Re,t as ge,u as m,v as Me,w as v,x as $,y as x,z as y}from"./chunk-IMHG6DOT.js";var oe=class{constructor(){this.content=null,this.isPlaying=!1,this.currentTime=0}};var re=(()=>{let i=class i{constructor(){this.persisted=null,this.lastSaveMs=0,this._completedIds=A(new Set),this.completedIds=this._completedIds.asReadonly(),this.persisted=this.loadFromStorage(),this._completedIds.set(new Set(this.persisted?.completed??[]));let e=this.persisted?{content:this.persisted.content,isPlaying:!1,currentTime:this.persisted.times[this.persisted.content.id]??0}:new oe;this.state=new ue(e)}performAction(e,n,o){let t=this.state.value;switch(e){case"play":if(n){let D=n.id===t.content?.id?t.currentTime:this.persisted?.times[n.id]??0;this.state.next({content:n,isPlaying:!0,currentTime:D}),this.persistContent(n)}break;case"pause":this.state.next(B(H({},t),{isPlaying:!1}));break;case"stop":if(this.state.next(B(H({},t),{isPlaying:!1,currentTime:0})),t.content&&this.persisted){let c=t.content.id;delete this.persisted.times[c],this.persisted.completed.includes(c)||(this.persisted.completed.push(c),this._completedIds.update(D=>new Set([...D,c]))),this.saveToStorage()}break;case"seek":typeof o=="number"&&(this.state.next(B(H({},t),{currentTime:o})),t.content&&this.throttledSaveTime(t.content.id,o));break}}getState(){return this.state.asObservable()}persistContent(e){this.persisted?this.persisted.content=e:this.persisted={content:e,times:{},completed:[]},this.saveToStorage()}throttledSaveTime(e,n){let o=Date.now();o-this.lastSaveMs<5e3||(this.lastSaveMs=o,this.persisted&&(this.persisted.times[e]=n,this.saveToStorage()))}loadFromStorage(){try{let e=localStorage.getItem("player-state");if(!e)return null;let n=JSON.parse(e);return!n.content?.id||!n.content?.link?null:{content:n.content,times:n.times??{},completed:n.completed??[]}}catch(e){return null}}saveToStorage(){try{localStorage.setItem("player-state",JSON.stringify(this.persisted))}catch(e){}}};i.\u0275fac=function(n){return new(n||i)},i.\u0275prov=f({token:i,factory:i.\u0275fac,providedIn:"root"});let a=i;return a})();var Te=[{episodio:"797",titulo:"Resident / Episode 797 / August 15 2026",likes:"1",descargas:"4.7K",fecha:"2026-08-15",descripcion:`1 - \xC1kos Gy\u0151rfy & Heaven INC. - Messier '87
+import{$ as De,A as q,B as j,C as L,D as N,E as ee,F as s,G as l,H as g,I as b,J as Y,K as Se,L as S,M as d,P as xe,Q as ye,R as Ae,S as _,T as P,U as u,V as G,W as O,X as ne,Y as ae,Z,a as H,aa as fe,b as B,ba as ie,c as C,ca as be,d as me,da as Ce,e as ue,ea as ve,f as he,fa as Pe,g as pe,h as f,i as h,j as p,k,l as M,m as U,n as X,o as A,p as J,q as de,r as ke,s as Re,t as ge,u as m,v as Me,w as v,x as $,y as x,z as y}from"./chunk-IMHG6DOT.js";var oe=class{constructor(){this.content=null,this.isPlaying=!1,this.currentTime=0}};var re=(()=>{let i=class i{constructor(){this.persisted=null,this.lastSaveMs=0,this._completedIds=A(new Set),this.completedIds=this._completedIds.asReadonly(),this.persisted=this.loadFromStorage(),this._completedIds.set(new Set(this.persisted?.completed??[]));let e=this.persisted?{content:this.persisted.content,isPlaying:!1,currentTime:this.persisted.times[this.persisted.content.id]??0}:new oe;this.state=new ue(e)}performAction(e,n,o){let t=this.state.value;switch(e){case"play":if(n){let D=n.id===t.content?.id?t.currentTime:this.persisted?.times[n.id]??0;this.state.next({content:n,isPlaying:!0,currentTime:D}),this.persistContent(n)}break;case"pause":this.state.next(B(H({},t),{isPlaying:!1}));break;case"stop":if(this.state.next(B(H({},t),{isPlaying:!1,currentTime:0})),t.content&&this.persisted){let c=t.content.id;delete this.persisted.times[c],this.persisted.completed.includes(c)||(this.persisted.completed.push(c),this._completedIds.update(D=>new Set([...D,c]))),this.saveToStorage()}break;case"seek":typeof o=="number"&&(this.state.next(B(H({},t),{currentTime:o})),t.content&&this.throttledSaveTime(t.content.id,o));break}}getState(){return this.state.asObservable()}persistContent(e){this.persisted?this.persisted.content=e:this.persisted={content:e,times:{},completed:[]},this.saveToStorage()}throttledSaveTime(e,n){let o=Date.now();o-this.lastSaveMs<5e3||(this.lastSaveMs=o,this.persisted&&(this.persisted.times[e]=n,this.saveToStorage()))}loadFromStorage(){try{let e=localStorage.getItem("player-state");if(!e)return null;let n=JSON.parse(e);return!n.content?.id||!n.content?.link?null:{content:n.content,times:n.times??{},completed:n.completed??[]}}catch(e){return null}}saveToStorage(){try{localStorage.setItem("player-state",JSON.stringify(this.persisted))}catch(e){}}};i.\u0275fac=function(n){return new(n||i)},i.\u0275prov=f({token:i,factory:i.\u0275fac,providedIn:"root"});let a=i;return a})();var Te=[{episodio:"798",titulo:"Resident / Episode 798 / August 22 2026",likes:"1",descargas:"838",fecha:"2026-08-22",descripcion:`1 - HAFT & Peyman S - Echoes In The Dark
+2 - Uccelli - Undertone
+3 - N-TCHBL & Violeta Reynal - Whisper My Name
+4 - Andr\xE9 Moret - Gaxyda (D-Nox & Beckers Remix)
+5 - RND\xD8M - Karma (Will DeKeizer Remix)
+6 - Gai Barone - Malacarne
+7 - Alex Efe & Diego Berrondo - Cosmos
+8 - MD Sound - Suzas
+9 - Nicolas Viana - Sound of Shadows
+10 - Tim French - Sans Peur (Aubrey Fry Remix) Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,link:"https://mcdn.podbean.com/mf/download/mbwpn3g82qr5hf33/798-HernanCattaneo-2026-08-22.mp3",tracklist:`HAFT & Peyman S - Echoes In The Dark
+Uccelli - Undertone
+N-TCHBL & Violeta Reynal - Whisper My Name
+Andr\xE9 Moret - Gaxyda (D-Nox & Beckers Remix)
+RND\xD8M - Karma (Will DeKeizer Remix)
+Gai Barone - Malacarne
+Alex Efe & Diego Berrondo - Cosmos
+MD Sound - Suzas
+Nicolas Viana - Sound of Shadows`},{episodio:"A",titulo:"Resident #stayhome #quedateencasa special - Sunsetstrip 2020",likes:"90",descargas:"67.1K",fecha:null,descripcion:"Hi everyone. I'm uploading a 7 hours set, recorded live from Sunsetstrip Buenos Aires on Feb 29th 2020 in an attempt to keep you company in these challenging times. Please, #stayhome and be safe. Hernan and BUENA Productora ----------------------- Hola a todos. Subo un set de 7 horas, grabado en Sunsetstrip Buenos Aires el 29 de Febrero de 2020, con la intenci\xF3n de hacerles compa\xF1\xEDa en \xE9stos tiempos dif\xEDciles. Por favor, #quedateencasa y cuidense. Hernan y BUENA Productora",link:"https://mcdn.podbean.com/mf/download/zc6x2c/HC_SunsetStrip_BA_2020-02-29.mp3",tracklist:"Hi everyone. I'm uploading a 7 hours set, recorded live from Sunsetstrip Buenos Aires on Feb 29th 2020 in an attempt to keep you company in these challenging times. Please, #stayhome and be safe. Hernan and BUENA Productora ----------------------- Hola a todos. Subo un set de 7 horas, grabado en Sunsetstrip Buenos Aires el 29 de Febrero de 2020, con la intenci\xF3n de hacerles compa\xF1\xEDa en \xE9stos tiempos dif\xEDciles. Por favor, #quedateencasa y cuidense. Hernan y BUENA Productora"},{episodio:"B",titulo:"Resident #stayhome #quedateencasa special - Sunsetstrip Home Edition 4/4/2020",likes:"48",descargas:"51.4K",fecha:null,descripcion:`Full Sunsetstrip Home Edition 5 hr set, recorded on 4/4/2020
+Please support you charity of choice Cruz Roja Argentina COAS UN Foundation Buena Productora`,link:"https://mcdn.podbean.com/mf/download/7ij5vk/Hernan_Cattaneo_-_Sunsetstrip_Home_Edition_4-4-2020.mp3",tracklist:"Full Sunsetstrip Home Edition 5 hr set, recorded on 4/4/2020"},{episodio:"797",titulo:"Resident / Episode 797 / August 15 2026",likes:"4",descargas:"7.5K",fecha:"2026-08-15",descripcion:`1 - \xC1kos Gy\u0151rfy & Heaven INC. - Messier '87
 2 - Nicolas Rada - Febo
 3 - Frankey & Sandrino - Take Me Back
 4 - Juan Deminicis & Alto Astral - Letting Go
@@ -15,8 +33,7 @@ Jochem Hamerling - Please It
 Cruz Vittor - Void Lumetry
 Aaron Suiss & Enzo Vood - Self Actualization
 Valentin Huedo & Chiara Gamo - Emozioni
-Tom Pavicich - When We Fly`},{episodio:"A",titulo:"Resident #stayhome #quedateencasa special - Sunsetstrip 2020",likes:"90",descargas:"67.1K",fecha:null,descripcion:"Hi everyone. I'm uploading a 7 hours set, recorded live from Sunsetstrip Buenos Aires on Feb 29th 2020 in an attempt to keep you company in these challenging times. Please, #stayhome and be safe. Hernan and BUENA Productora ----------------------- Hola a todos. Subo un set de 7 horas, grabado en Sunsetstrip Buenos Aires el 29 de Febrero de 2020, con la intenci\xF3n de hacerles compa\xF1\xEDa en \xE9stos tiempos dif\xEDciles. Por favor, #quedateencasa y cuidense. Hernan y BUENA Productora",link:"https://mcdn.podbean.com/mf/download/zc6x2c/HC_SunsetStrip_BA_2020-02-29.mp3",tracklist:"Hi everyone. I'm uploading a 7 hours set, recorded live from Sunsetstrip Buenos Aires on Feb 29th 2020 in an attempt to keep you company in these challenging times. Please, #stayhome and be safe. Hernan and BUENA Productora ----------------------- Hola a todos. Subo un set de 7 horas, grabado en Sunsetstrip Buenos Aires el 29 de Febrero de 2020, con la intenci\xF3n de hacerles compa\xF1\xEDa en \xE9stos tiempos dif\xEDciles. Por favor, #quedateencasa y cuidense. Hernan y BUENA Productora"},{episodio:"B",titulo:"Resident #stayhome #quedateencasa special - Sunsetstrip Home Edition 4/4/2020",likes:"48",descargas:"51.4K",fecha:null,descripcion:`Full Sunsetstrip Home Edition 5 hr set, recorded on 4/4/2020
-Please support you charity of choice Cruz Roja Argentina COAS UN Foundation Buena Productora`,link:"https://mcdn.podbean.com/mf/download/7ij5vk/Hernan_Cattaneo_-_Sunsetstrip_Home_Edition_4-4-2020.mp3",tracklist:"Full Sunsetstrip Home Edition 5 hr set, recorded on 4/4/2020"},{episodio:"796",titulo:"Resident / Episode 796 / August 08 2026",likes:"6",descargas:"13.7K",fecha:"2026-08-08",descripcion:`1 - Gonzalo Sacc - You & Me
+Tom Pavicich - When We Fly`},{episodio:"796",titulo:"Resident / Episode 796 / August 08 2026",likes:"7",descargas:"14.5K",fecha:"2026-08-08",descripcion:`1 - Gonzalo Sacc - You & Me
 2 - Fran Garay & Diego R - Closed Feelings
 3 - MD Sound - Another Life
 4 - Artic White - Rosea (D-Nox & Kamilo Sanclemente Remix)
@@ -33,7 +50,7 @@ Steve Bug & Youandme - I Hear You (Julieta K\xFChnle Remix)
 Michael Bennett - Clandestine (DJ Ruby Remix)
 Kevin Di Serna & Cruz Vittor - Dimension Dreams
 Kostya Outta - Feel It
-CANCCI - The Treasure Inside (Baunder Remix)`},{episodio:"795",titulo:"Resident / Episode 795 / August 01 2026",likes:"5",descargas:"21.5K",fecha:"2026-08-01",descripcion:`1 - Peace - Berlioz (Martin Serbali Remix)
+CANCCI - The Treasure Inside (Baunder Remix)`},{episodio:"795",titulo:"Resident / Episode 795 / August 01 2026",likes:"6",descargas:"22.1K",fecha:"2026-08-01",descripcion:`1 - Peace - Berlioz (Martin Serbali Remix)
 2 - Joaqu\xEDn Salmain - Still In Love
 3 - Federico Cabrera & JP Mantero - Slight Gallop
 4 - Joaqu\xEDn Salmain - Yunga
@@ -50,7 +67,7 @@ Gai Barone & Kasey Taylor - Mutations
 Patch Park - The Bells Of Revolution
 GABBE (AR) & Mateo Tapia - Noesis
 Elliot Moriarty - Together
-Tom Pavicich - Power Express`},{episodio:"794",titulo:"Resident / Episode 794 / July 25 2026",likes:"13",descargas:"17.8K",fecha:"2026-07-25",descripcion:`1 - Gai Barone - All I Need (Hernan Cattaneo & Mercurio Remix)
+Tom Pavicich - Power Express`},{episodio:"794",titulo:"Resident / Episode 794 / July 25 2026",likes:"16",descargas:"18.1K",fecha:"2026-07-25",descripcion:`1 - Gai Barone - All I Need (Hernan Cattaneo & Mercurio Remix)
 2 - Eli Nissan - Empty Sky
 3 - Valdovinos - Always Ready (for love)
 4 - Valdovinos - Rebel
@@ -67,7 +84,7 @@ Jeremy Olander - Caravelle (MC Remix - Paul Deep Regroove)
 Kasey Taylor - Kerfuffle
 Jamie Stevens & Kasey Taylor - Hocu Pocu
 Hobin Rude - Slow Escape (Rolasoul Remix)
-Nick Stoynoff - Changement`},{episodio:"793",titulo:"Resident / Episode 793 / July 18 2026",likes:"5",descargas:"25K",fecha:"2026-07-18",descripcion:`1 - Ula - L'espoir De Te Revoir
+Nick Stoynoff - Changement`},{episodio:"793",titulo:"Resident / Episode 793 / July 18 2026",likes:"5",descargas:"25.2K",fecha:"2026-07-18",descripcion:`1 - Ula - L'espoir De Te Revoir
 2 - Gai Barone - Limbic (Nicolas Viana Remix)
 3 - Around Us & Rikken - 655
 4 - Antrim - Pushback
@@ -84,7 +101,7 @@ Ry X & The Acid - Breed (Kevin Di Serna & Devlant Remix)
 Sebastian Schetter - Alaia
 Budakid - Dream Atlas
 Kasey Voorn - Voices (Nicolas Benedetti Edit)
-Oling - Get On The Floor`},{episodio:"792",titulo:"Resident / Episode 792 / July 11 2026",likes:"9",descargas:"19K",fecha:"2026-07-11",descripcion:`1 - Simos Tagias & Roger Martinez - Shadow Work
+Oling - Get On The Floor`},{episodio:"792",titulo:"Resident / Episode 792 / July 11 2026",likes:"10",descargas:"19.1K",fecha:"2026-07-11",descripcion:`1 - Simos Tagias & Roger Martinez - Shadow Work
 2 - Mati Melgarejo & Gero Rinaldi - Obscura
 3 - Exesti - Reliq (Gorkiz Remix Extended)
 4 - Teiko Yume - Cosma Code
@@ -101,7 +118,7 @@ Innate - Vortex
 DAVI - It Disappeared Among The Trees
 John Cosani & Bruno De La Vega - Entresol
 Paul Deep - Tique
-Gai Barone - Limbic (Integral Bread & Benja Molina Extended Remix)`},{episodio:"791",titulo:"Resident / Episode 791 / July 04 2026",likes:"9",descargas:"29.1K",fecha:"2026-07-04",descripcion:`1 - Haft - Distant Blue
+Gai Barone - Limbic (Integral Bread & Benja Molina Extended Remix)`},{episodio:"791",titulo:"Resident / Episode 791 / July 04 2026",likes:"9",descargas:"29.2K",fecha:"2026-07-04",descripcion:`1 - Haft - Distant Blue
 2 - Haft - Kalioscope (Maze 28 & EMPHI Remix)
 3 - Teiko Yume - Club Sofa
 4 - Gorkiz & Tavaresgui - Axion
@@ -118,7 +135,7 @@ Durante & Mayro - Mantra
 Dave Walker - Kamino (Gai Barone Remix)
 Aubrey Fry & LOVAT - Sheffield Wednesday
 Kasey Taylor - Fangled
-Stark - Under The Moon (Ziger & Mind Conspiracy Remix)`},{episodio:"790",titulo:"Resident / Episode 790 / June 27 2026",likes:"8",descargas:"27.2K",fecha:"2026-06-27",descripcion:`1 - Gai Barone - All about her
+Stark - Under The Moon (Ziger & Mind Conspiracy Remix)`},{episodio:"790",titulo:"Resident / Episode 790 / June 27 2026",likes:"8",descargas:"27.4K",fecha:"2026-06-27",descripcion:`1 - Gai Barone - All about her
 2 - Kebin van Reeken - Early Nights (FAERO Remix)
 3 - Tato Seco & Ignacio Hern\xE1ndez - Delta State
 4 - Durante & ALLKNIGHT - How Does It Feel (Dub Mix)
@@ -152,7 +169,7 @@ Nico Lahs - My Side (Tato Seco Edit)
 QuiQui & Thom Rich - Victorious (Gai Barone Darkside Extended Remix)
 Gai Barone & Tiefstone - Suddenly (Gorkiz Remix)
 Zankee Gulati & GMJ & Matter - Emerge
-Katrin Souza - Echoes of Happiness`},{episodio:"788",titulo:"Resident / Episode 788 / June 13 2026",likes:"13",descargas:"29.1K",fecha:"2026-06-13",descripcion:`1 - Katrin Souza - Echoes of Happiness (Derek Christopher Remix)
+Katrin Souza - Echoes of Happiness`},{episodio:"788",titulo:"Resident / Episode 788 / June 13 2026",likes:"13",descargas:"29.2K",fecha:"2026-06-13",descripcion:`1 - Katrin Souza - Echoes of Happiness (Derek Christopher Remix)
 2 - Urmet - Where The Birds Speak
 3 - Kebin van Reeken - Sax Talk
 4 - E A N P - Conversations
@@ -169,7 +186,7 @@ Shayan Pasha & Rauschhaus - Groove Ambassador
 Budakid - Chromium
 Kevin Di Serna & Cruz Vittor - Show Me
 Luke Chable Pres. Quest - Skyline Road (Baunder Remix)
-Cruz Vittor & Cocho - Summer of 19`},{episodio:"787",titulo:"Resident / Episode 787 / June 06 2026",likes:"6",descargas:"28.5K",fecha:"2026-06-06",descripcion:`1 - Verlk - New Day
+Cruz Vittor & Cocho - Summer of 19`},{episodio:"787",titulo:"Resident / Episode 787 / June 06 2026",likes:"6",descargas:"28.6K",fecha:"2026-06-06",descripcion:`1 - Verlk - New Day
 2 - Juan Deminicis & Alto Astral - Letting go
 3 - Diego Acosta - Lune Noir (Felipe Garcia (UY) & Juan Lagisquet Remix)
 4 - Brian Creao - Temperance (Juan Iba\xF1ez Remix)
@@ -203,7 +220,7 @@ Inger - Find You (Nick Stoynoff Remix)
 Antrim - Unstuck
 E A N P - Step In Side
 Polo - Panic Compression
-DJ MEOZ - White Devil`},{episodio:"785",titulo:"Resident / Episode 785 / May 23 2026",likes:"11",descargas:"31.1K",fecha:"2026-05-23",descripcion:`1 - Mike Rish - Spinakopt
+DJ MEOZ - White Devil`},{episodio:"785",titulo:"Resident / Episode 785 / May 23 2026",likes:"11",descargas:"31.2K",fecha:"2026-05-23",descripcion:`1 - Mike Rish - Spinakopt
 2 - Hicky & Kalo & Anonimat - Lifeline
 3 - This Guy Ben - The Drip
 4 - Petar Dundov - Daydreaming
@@ -373,7 +390,7 @@ GMJ, Matter - Cryo
 Lucas Martinez - Feel the Sky
 Digital Mess, Forty Cats - Faraday Cage
 Grance, J Doppler - Astral Motion
-Allex - Ramshackle (Regina Picone Remix)`},{episodio:"775",titulo:"Resident / Episode 775 / Mar 14 2026",likes:"12",descargas:"22.8K",fecha:"2026-03-14",descripcion:`1 - Fran Garay - Gero's Melody
+Allex - Ramshackle (Regina Picone Remix)`},{episodio:"775",titulo:"Resident / Episode 775 / Mar 14 2026",likes:"12",descargas:"22.9K",fecha:"2026-03-14",descripcion:`1 - Fran Garay - Gero's Melody
 2 - Emi Galvan - Everlong (Hermanez Remix)
 3 - Cetrini - Luci
 4 - Ric Niels - Before
@@ -416,7 +433,7 @@ ZAC - Equalizer`},{episodio:"773",titulo:"Resident / Episode 773 / Feb 28 2026",
 7 - UNWA - Lonely (Katrin Souza Remix)
 8 - Nick Stoynoff - Strawberry Fields
 9 - Calcou - Closer
-10 - HVOB - The Blame Game (Roman & Juan Ib\xE1\xF1ez Bootleg) Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"10",descargas:"23.4K",fecha:"2026-02-28",link:"https://mcdn.podbean.com/mf/download/xfke6wb9zbf77g68/773-HernanCattaneo-2026-02-28.mp3",tracklist:`Uccelli - Flicker
+10 - HVOB - The Blame Game (Roman & Juan Ib\xE1\xF1ez Bootleg) Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"10",descargas:"23.5K",fecha:"2026-02-28",link:"https://mcdn.podbean.com/mf/download/xfke6wb9zbf77g68/773-HernanCattaneo-2026-02-28.mp3",tracklist:`Uccelli - Flicker
 Steve Parry - Freeze
 Quivver - Moonlight Pools (Cruz Vittor Remix)
 Circulation, Cass (UK) - Nuke the Site From Orbit (Cass Skunkworks Remix)
@@ -856,7 +873,7 @@ Gregor Tresher - Lights From The Inside (Dosem Remix)
 
 Marcelo Vasami & Ariel AB - Too Long Too Late (Silinder Remix)
 
-Examine - Stand Alone (Estroe Remix)`},{episodio:"006",titulo:"Resident / Episode 006 / June 11 2011",descripcion:"Part1 Tracklist Manuel Sofia - Simple Things Taras van de Voorde/ Estroe - Hear This (Neil Quigley) Alex Niggemann - Lately Dousk - Estrange (Roger Martinez ReFunk) Pig & Dan - Tears Of A Clown Part2 Tracklist Maceo Plex & Elon - Bummalo Cozzy D, Eric Volta - The Gift (Kevin Griffiths Northern Exposure Remix) Claus Von Klunk - Fandango (Dousk remix) Mango, Kazusa - Asphalt Lines (Ryan David Interpretation ) John Digweed & Nick Muir - 30 Northeast",likes:"10",descargas:"6.9K",fecha:"2011-06-11",link:"https://mcdn.podbean.com/mf/download/hsxr7/006-HernanCattaneo-2011-06-11.mp3",tracklist:"Part 1 Manuel Sofia - Simple Things Taras van de Voorde/ Estroe - Hear This (Neil Quigley) Alex Niggemann - Lately Dousk - Estrange (Roger Martinez ReFunk) Pig & Dan - Tears Of A Clown Part 2 Maceo Plex & Elon - Bummalo Cozzy D, Eric Volta - The Gift (Kevin Griffiths Northern Exposure Remix) Claus Von Klunk - Fandango (Dousk remix) Mango, Kazusa - Asphalt Lines (Ryan David Interpretation ) John Digweed & Nick Muir - 30 Northeast"},{episodio:"007",titulo:"Resident / Episode 007 / June 18 2011",descripcion:"Part 1 Tracklist Sebo K - Mr. Duk Rowdent - Garage sale Ocean Wave - Clearwater (Chloe Harris Remix) Inkfish - Detroit Quivver feat Cari Golden - Happy Part 2 Tracklist Ryan Davis, Transistor - Nature Is The Law (Original Mix) Mike Griego - In That Moment Martin Morning, Mattia Cunico - Outside Its Better (Hernan Cattaneo & Soundexile rmx) Martin Morning, Mattia Cunico - Duuud (Hernan Cattaneo & Soundexile rmx)",likes:"4",descargas:"7.1K",fecha:"2011-06-18",link:"https://mcdn.podbean.com/mf/download/hbhkkc/007-HernanCattaneo-2011-06-18.mp3",tracklist:"Part 1 Sebo K - Mr. Duk Rowdent - Garage sale Ocean Wave - Clearwater (Chloe Harris Remix) Inkfish - Detroit Quivver feat Cari Golden - Happy Part 2 Ryan Davis, Transistor - Nature Is The Law (Original Mix) Mike Griego - In That Moment Martin Morning, Mattia Cunico - Outside Its Better (Hernan Cattaneo & Soundexile rmx) Martin Morning, Mattia Cunico - Duuud (Hernan Cattaneo & Soundexile rmx)"},{episodio:"001",titulo:"Resident / Episode 001.1 / May 7th 2011",descripcion:"01. Who Made Who - Every Minute Alone (Michael Mayer Remix) 02. Roger Martinez - Andromeda (Dub Mix) 03. Sasha - Minimal - QAT (Nomad in the Dark dub) 04. Ruede Hagelstein - Emergency (Super Flu's Gentle Dental Nurse Remix )",likes:"21",descargas:"7.9K",fecha:"2011-05-07",link:"https://mcdn.podbean.com/mf/download/926aiz/001_1-HernanCattaneo-2011-05-07.mp3",tracklist:"Who Made Who - Every Minute Alone (Michael Mayer Remix) 02. Roger Martinez - Andromeda (Dub Mix) 03. Sasha - Minimal - QAT (Nomad in the Dark dub) 04. Ruede Hagelstein - Emergency (Super Flu's Gentle Dental Nurse Remix )"},{episodio:"002",titulo:"Resident / Episode 002.1 / May 14th 2011",descripcion:"Part 1 tracklist Chaim-Alive (Kiki Extended Remix) Siopsis-I Try To Fight feat. Alfons Midland-Through Motion Glimpse, Martin Dawson-No One Belongs Here More Than You - (Ewan's Balearos Maximos Remix) Alex Arnout - Vanishing Point",likes:"14",descargas:"6.9K",fecha:"2011-05-14",link:"https://mcdn.podbean.com/mf/download/emu6ik/002_1-HernanCattaneo-2011-05-14.mp3",tracklist:"Part 1 Chaim-Alive (Kiki Extended Remix) Siopsis-I Try To Fight feat. Alfons Midland-Through Motion Glimpse, Martin Dawson-No One Belongs Here More Than You - (Ewan's Balearos Maximos Remix) Alex Arnout - Vanishing Point"},{episodio:"003",titulo:"Resident / Episode 003 / May 21st 2011",descripcion:"Part 1 tracklist Espen, Elusive - Albatross Confessions (Ryan Davis rework) Jimpster - Alsace & Lorraine (Ripperton Remix Lee Foss - Your Turn Girl (Shonky & Dyed Soundorom remix) Kid Bliss - Discoshit Ryan Luciano - l\xB4 jenwar (Silinder Remix) Part 2 tracklist Nhar - Innerplace (John Daily mix) Gregor Tresher - Through the shadow glass Kassey Voorn - Viola Egostereo - Sex Pistols (Hernan Cattaneo & Soundexile rmx)",likes:"11",descargas:"7.5K",fecha:"2011-05-21",link:"https://mcdn.podbean.com/mf/download/te8ea/003-HernanCattaneo-2011-05-21.mp3",tracklist:"Part 1 Espen, Elusive - Albatross Confessions (Ryan Davis rework) Jimpster - Alsace & Lorraine (Ripperton Remix Lee Foss - Your Turn Girl (Shonky & Dyed Soundorom remix) Kid Bliss - Discoshit Ryan Luciano - l\xB4 jenwar (Silinder Remix) Part 2 Nhar - Innerplace (John Daily mix) Gregor Tresher - Through the shadow glass Kassey Voorn - Viola Egostereo - Sex Pistols (Hernan Cattaneo & Soundexile rmx)"},{episodio:"004",titulo:"Resident / Episode 004 / May 28th 2011",descripcion:"Part 1 tracklist Ryan Davis - My White Zebra (Estroe Remix ) Arithmetics - For The Faint of Heart [ Arithmetics] CamelPhat - Watergate Rodskeez & Adam Jace - In My Naked Village Patrice Baumel - To Insanity And Beyond Part 2 tracklist Dave Shtorn - Magic Moments (Eelke Kleijn's Magical Dub Ride) Sven Vath - Ballet Romance (Yousef) Andrew McDonnell - @am dj Scotty A - Persistence",likes:"9",descargas:"8.3K",fecha:"2011-05-28",link:"https://mcdn.podbean.com/mf/download/wu3yxg/004-HernanCattaneo-2011-05-28.mp3",tracklist:"Part 1 Ryan Davis - My White Zebra (Estroe Remix ) Arithmetics - For The Faint of Heart [ Arithmetics] CamelPhat - Watergate Rodskeez & Adam Jace - In My Naked Village Patrice Baumel - To Insanity And Beyond Part 2 Dave Shtorn - Magic Moments (Eelke Kleijn's Magical Dub Ride) Sven Vath - Ballet Romance (Yousef) Andrew McDonnell - @am dj Scotty A - Persistence"},{episodio:"005",titulo:"Resident / Episode 005 / June 04 2011",descripcion:"Part 1 tracklist Paneoh- Sanatrack (Gregers Remix) Mario & Vidis feat. Ernesto - Changed (Andre Lodemann Remix) Heiko Laux & Teo Schulte - Suol Hug (Till von Sein Last Minute DoomDub) System 7 - Positive Noise (Original Cub Mix) DJ Freddy & Michael Avannier - Mechanic system Part 2 tracklist Tim Deluxe & Mat Playford - Back to the Rocket (Club Mix) Slow - Cold Slow (Speiltape Remix) Android Cartel - Wake Up (Dark Soul Project Remix) Kasey Taylor - Similarity (Barry Jamieson Remix)",likes:"9",descargas:"7.1K",fecha:"2011-06-04",link:"https://mcdn.podbean.com/mf/download/um7mc/005-HernanCattaneo-2011-06-04.mp3",tracklist:"Part 1 Paneoh- Sanatrack (Gregers Remix) Mario & Vidis feat. Ernesto - Changed (Andre Lodemann Remix) Heiko Laux & Teo Schulte - Suol Hug (Till von Sein Last Minute DoomDub) System 7 - Positive Noise (Original Cub Mix) DJ Freddy & Michael Avannier - Mechanic system Part 2 Tim Deluxe & Mat Playford - Back to the Rocket (Club Mix) Slow - Cold Slow (Speiltape Remix) Android Cartel - Wake Up (Dark Soul Project Remix) Kasey Taylor - Similarity (Barry Jamieson Remix)"},{episodio:"008",titulo:"Resident / Episode 008 / June 25 2011",descripcion:"Part 1 Tracklist The XX - Fantasy (Sound Process) Guy J - Sahara Gregor Tresher - LEAVING Jimmy Van M Feat. Steve T \u2013 We Are Children Part 2 tracklist Lonya and Aruba feat. Patrick Grob - Cannibals Moby vs Mohrr Kai Handberg - Hengemyr Verche - Awakening",likes:"4",descargas:"7.6K",fecha:"2011-06-25",link:"https://mcdn.podbean.com/mf/download/sqswd/008-HernanCattaneo-2011-06-25.mp3",tracklist:"Part 1 The XX - Fantasy (Sound Process) Guy J - Sahara Gregor Tresher - LEAVING Jimmy Van M Feat. Steve T \u2013 We Are Children Part 2 Lonya and Aruba feat. Patrick Grob - Cannibals Moby vs Mohrr Kai Handberg - Hengemyr Verche - Awakening"},{episodio:"009",titulo:"Resident / Episode 009 / July 02 2011",descripcion:`Part 1 Tracklist Martin Buttrich - Rocket
+Examine - Stand Alone (Estroe Remix)`},{episodio:"006",titulo:"Resident / Episode 006 / June 11 2011",descripcion:"Part1 Tracklist Manuel Sofia - Simple Things Taras van de Voorde/ Estroe - Hear This (Neil Quigley) Alex Niggemann - Lately Dousk - Estrange (Roger Martinez ReFunk) Pig & Dan - Tears Of A Clown Part2 Tracklist Maceo Plex & Elon - Bummalo Cozzy D, Eric Volta - The Gift (Kevin Griffiths Northern Exposure Remix) Claus Von Klunk - Fandango (Dousk remix) Mango, Kazusa - Asphalt Lines (Ryan David Interpretation ) John Digweed & Nick Muir - 30 Northeast",likes:"10",descargas:"6.9K",fecha:"2011-06-11",link:"https://mcdn.podbean.com/mf/download/hsxr7/006-HernanCattaneo-2011-06-11.mp3",tracklist:"Part 1 Manuel Sofia - Simple Things Taras van de Voorde/ Estroe - Hear This (Neil Quigley) Alex Niggemann - Lately Dousk - Estrange (Roger Martinez ReFunk) Pig & Dan - Tears Of A Clown Part 2 Maceo Plex & Elon - Bummalo Cozzy D, Eric Volta - The Gift (Kevin Griffiths Northern Exposure Remix) Claus Von Klunk - Fandango (Dousk remix) Mango, Kazusa - Asphalt Lines (Ryan David Interpretation ) John Digweed & Nick Muir - 30 Northeast"},{episodio:"007",titulo:"Resident / Episode 007 / June 18 2011",descripcion:"Part 1 Tracklist Sebo K - Mr. Duk Rowdent - Garage sale Ocean Wave - Clearwater (Chloe Harris Remix) Inkfish - Detroit Quivver feat Cari Golden - Happy Part 2 Tracklist Ryan Davis, Transistor - Nature Is The Law (Original Mix) Mike Griego - In That Moment Martin Morning, Mattia Cunico - Outside Its Better (Hernan Cattaneo & Soundexile rmx) Martin Morning, Mattia Cunico - Duuud (Hernan Cattaneo & Soundexile rmx)",likes:"4",descargas:"7.1K",fecha:"2011-06-18",link:"https://mcdn.podbean.com/mf/download/hbhkkc/007-HernanCattaneo-2011-06-18.mp3",tracklist:"Part 1 Sebo K - Mr. Duk Rowdent - Garage sale Ocean Wave - Clearwater (Chloe Harris Remix) Inkfish - Detroit Quivver feat Cari Golden - Happy Part 2 Ryan Davis, Transistor - Nature Is The Law (Original Mix) Mike Griego - In That Moment Martin Morning, Mattia Cunico - Outside Its Better (Hernan Cattaneo & Soundexile rmx) Martin Morning, Mattia Cunico - Duuud (Hernan Cattaneo & Soundexile rmx)"},{episodio:"001",titulo:"Resident / Episode 001.1 / May 7th 2011",descripcion:"01. Who Made Who - Every Minute Alone (Michael Mayer Remix) 02. Roger Martinez - Andromeda (Dub Mix) 03. Sasha - Minimal - QAT (Nomad in the Dark dub) 04. Ruede Hagelstein - Emergency (Super Flu's Gentle Dental Nurse Remix )",likes:"21",descargas:"7.9K",fecha:"2011-05-07",link:"https://mcdn.podbean.com/mf/download/926aiz/001_1-HernanCattaneo-2011-05-07.mp3",tracklist:"Who Made Who - Every Minute Alone (Michael Mayer Remix) 02. Roger Martinez - Andromeda (Dub Mix) 03. Sasha - Minimal - QAT (Nomad in the Dark dub) 04. Ruede Hagelstein - Emergency (Super Flu's Gentle Dental Nurse Remix )"},{episodio:"002",titulo:"Resident / Episode 002.1 / May 14th 2011",descripcion:"Part 1 tracklist Chaim-Alive (Kiki Extended Remix) Siopsis-I Try To Fight feat. Alfons Midland-Through Motion Glimpse, Martin Dawson-No One Belongs Here More Than You - (Ewan's Balearos Maximos Remix) Alex Arnout - Vanishing Point",likes:"11",descargas:"6.4K",fecha:"2011-05-14",link:"https://mcdn.podbean.com/mf/download/emu6ik/002_1-HernanCattaneo-2011-05-14.mp3",tracklist:"Part 1 Chaim-Alive (Kiki Extended Remix) Siopsis-I Try To Fight feat. Alfons Midland-Through Motion Glimpse, Martin Dawson-No One Belongs Here More Than You - (Ewan's Balearos Maximos Remix) Alex Arnout - Vanishing Point"},{episodio:"003",titulo:"Resident / Episode 003 / May 21st 2011",descripcion:"Part 1 tracklist Espen, Elusive - Albatross Confessions (Ryan Davis rework) Jimpster - Alsace & Lorraine (Ripperton Remix Lee Foss - Your Turn Girl (Shonky & Dyed Soundorom remix) Kid Bliss - Discoshit Ryan Luciano - l\xB4 jenwar (Silinder Remix) Part 2 tracklist Nhar - Innerplace (John Daily mix) Gregor Tresher - Through the shadow glass Kassey Voorn - Viola Egostereo - Sex Pistols (Hernan Cattaneo & Soundexile rmx)",likes:"11",descargas:"7.5K",fecha:"2011-05-21",link:"https://mcdn.podbean.com/mf/download/te8ea/003-HernanCattaneo-2011-05-21.mp3",tracklist:"Part 1 Espen, Elusive - Albatross Confessions (Ryan Davis rework) Jimpster - Alsace & Lorraine (Ripperton Remix Lee Foss - Your Turn Girl (Shonky & Dyed Soundorom remix) Kid Bliss - Discoshit Ryan Luciano - l\xB4 jenwar (Silinder Remix) Part 2 Nhar - Innerplace (John Daily mix) Gregor Tresher - Through the shadow glass Kassey Voorn - Viola Egostereo - Sex Pistols (Hernan Cattaneo & Soundexile rmx)"},{episodio:"004",titulo:"Resident / Episode 004 / May 28th 2011",descripcion:"Part 1 tracklist Ryan Davis - My White Zebra (Estroe Remix ) Arithmetics - For The Faint of Heart [ Arithmetics] CamelPhat - Watergate Rodskeez & Adam Jace - In My Naked Village Patrice Baumel - To Insanity And Beyond Part 2 tracklist Dave Shtorn - Magic Moments (Eelke Kleijn's Magical Dub Ride) Sven Vath - Ballet Romance (Yousef) Andrew McDonnell - @am dj Scotty A - Persistence",likes:"9",descargas:"8.3K",fecha:"2011-05-28",link:"https://mcdn.podbean.com/mf/download/wu3yxg/004-HernanCattaneo-2011-05-28.mp3",tracklist:"Part 1 Ryan Davis - My White Zebra (Estroe Remix ) Arithmetics - For The Faint of Heart [ Arithmetics] CamelPhat - Watergate Rodskeez & Adam Jace - In My Naked Village Patrice Baumel - To Insanity And Beyond Part 2 Dave Shtorn - Magic Moments (Eelke Kleijn's Magical Dub Ride) Sven Vath - Ballet Romance (Yousef) Andrew McDonnell - @am dj Scotty A - Persistence"},{episodio:"005",titulo:"Resident / Episode 005 / June 04 2011",descripcion:"Part 1 tracklist Paneoh- Sanatrack (Gregers Remix) Mario & Vidis feat. Ernesto - Changed (Andre Lodemann Remix) Heiko Laux & Teo Schulte - Suol Hug (Till von Sein Last Minute DoomDub) System 7 - Positive Noise (Original Cub Mix) DJ Freddy & Michael Avannier - Mechanic system Part 2 tracklist Tim Deluxe & Mat Playford - Back to the Rocket (Club Mix) Slow - Cold Slow (Speiltape Remix) Android Cartel - Wake Up (Dark Soul Project Remix) Kasey Taylor - Similarity (Barry Jamieson Remix)",likes:"9",descargas:"7.1K",fecha:"2011-06-04",link:"https://mcdn.podbean.com/mf/download/um7mc/005-HernanCattaneo-2011-06-04.mp3",tracklist:"Part 1 Paneoh- Sanatrack (Gregers Remix) Mario & Vidis feat. Ernesto - Changed (Andre Lodemann Remix) Heiko Laux & Teo Schulte - Suol Hug (Till von Sein Last Minute DoomDub) System 7 - Positive Noise (Original Cub Mix) DJ Freddy & Michael Avannier - Mechanic system Part 2 Tim Deluxe & Mat Playford - Back to the Rocket (Club Mix) Slow - Cold Slow (Speiltape Remix) Android Cartel - Wake Up (Dark Soul Project Remix) Kasey Taylor - Similarity (Barry Jamieson Remix)"},{episodio:"008",titulo:"Resident / Episode 008 / June 25 2011",descripcion:"Part 1 Tracklist The XX - Fantasy (Sound Process) Guy J - Sahara Gregor Tresher - LEAVING Jimmy Van M Feat. Steve T \u2013 We Are Children Part 2 tracklist Lonya and Aruba feat. Patrick Grob - Cannibals Moby vs Mohrr Kai Handberg - Hengemyr Verche - Awakening",likes:"4",descargas:"7.6K",fecha:"2011-06-25",link:"https://mcdn.podbean.com/mf/download/sqswd/008-HernanCattaneo-2011-06-25.mp3",tracklist:"Part 1 The XX - Fantasy (Sound Process) Guy J - Sahara Gregor Tresher - LEAVING Jimmy Van M Feat. Steve T \u2013 We Are Children Part 2 Lonya and Aruba feat. Patrick Grob - Cannibals Moby vs Mohrr Kai Handberg - Hengemyr Verche - Awakening"},{episodio:"009",titulo:"Resident / Episode 009 / July 02 2011",descripcion:`Part 1 Tracklist Martin Buttrich - Rocket
 
 Adam Port feat. Ruede Hagelstein - Corrosive Love
 
@@ -956,7 +973,7 @@ Guy J & Miriam Vaga - Fly (Simon Vuarambon & Kevin Di Serna Main Mix)
 
 Astraway - Payment in Full
 
-John Digweed & Nick Muir \u2013 30 Northeast (Nikko.Z Unofficial Remix)`},{episodio:"014",titulo:"Resident / Episode 014 / August 06 2011",descripcion:"Part 1 Tracklist Azari & III - Manic - Maceo Plex Remix Jin Choi - Half Baked (Maceo Plex Groove Remix) Hakan Libdo -Meatmatching - Summer (Brendon Collins) Alex Celler - Blue Vaudeville (Shonky Remix) Part 2 Tracklist Santiago Garcia - Needing Rest (Original mix) Radiohead - Codex (Henry Saiz Rmx) Dark Soul Project & Andy Arias - To Be Or Not To Be Lonya & Audio Junkies - Fetish (Audio Junkies Mix) Oliver Lieb - Extrasolar",likes:"4",descargas:"8K",fecha:"2011-08-06",link:"https://mcdn.podbean.com/mf/download/cxidps/014-HernanCattaneo-2011-08-06.mp3",tracklist:"Part 1 Azari & III - Manic - Maceo Plex Remix Jin Choi - Half Baked (Maceo Plex Groove Remix) Hakan Libdo -Meatmatching - Summer (Brendon Collins) Alex Celler - Blue Vaudeville (Shonky Remix) Part 2 Santiago Garcia - Needing Rest (Original mix) Radiohead - Codex (Henry Saiz Rmx) Dark Soul Project & Andy Arias - To Be Or Not To Be Lonya & Audio Junkies - Fetish (Audio Junkies Mix) Oliver Lieb - Extrasolar"},{episodio:"015",titulo:"Resident / Episode 015 / August 13 2011",descripcion:`Part 1 Tracklist Deep Mariano - Secret Passage
+John Digweed & Nick Muir \u2013 30 Northeast (Nikko.Z Unofficial Remix)`},{episodio:"014",titulo:"Resident / Episode 014 / August 06 2011",descripcion:"Part 1 Tracklist Azari & III - Manic - Maceo Plex Remix Jin Choi - Half Baked (Maceo Plex Groove Remix) Hakan Libdo -Meatmatching - Summer (Brendon Collins) Alex Celler - Blue Vaudeville (Shonky Remix) Part 2 Tracklist Santiago Garcia - Needing Rest (Original mix) Radiohead - Codex (Henry Saiz Rmx) Dark Soul Project & Andy Arias - To Be Or Not To Be Lonya & Audio Junkies - Fetish (Audio Junkies Mix) Oliver Lieb - Extrasolar",likes:"5",descargas:"8K",fecha:"2011-08-06",link:"https://mcdn.podbean.com/mf/download/cxidps/014-HernanCattaneo-2011-08-06.mp3",tracklist:"Part 1 Azari & III - Manic - Maceo Plex Remix Jin Choi - Half Baked (Maceo Plex Groove Remix) Hakan Libdo -Meatmatching - Summer (Brendon Collins) Alex Celler - Blue Vaudeville (Shonky Remix) Part 2 Santiago Garcia - Needing Rest (Original mix) Radiohead - Codex (Henry Saiz Rmx) Dark Soul Project & Andy Arias - To Be Or Not To Be Lonya & Audio Junkies - Fetish (Audio Junkies Mix) Oliver Lieb - Extrasolar"},{episodio:"015",titulo:"Resident / Episode 015 / August 13 2011",descripcion:`Part 1 Tracklist Deep Mariano - Secret Passage
 
 Vector Lovers - Melodies And Memory (Marquez Ill Remix)
 
@@ -10181,7 +10198,7 @@ Andy Woldman, Liam Sieker - Panther (Lemon8 Inner Sanctuary Remix) /`},{episodio
 7 - Alan Cerra - Blackout (Melodiam (AR) Remix) /\xA0
 8 - Daniel Curotto - Mediterraneo (East Cafe Balearic Remix) /\xA0
 9 - Madeaux - Me & U (Pablo Loiacono Bootleg) /\xA0
-10 - Nicolas Benedetti - Meraki / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"22",descargas:"54.1K",fecha:"2024-03-09",link:"https://mcdn.podbean.com/mf/download/scisf4/670-HernanCattaneo-2024-03-09.mp3",tracklist:`Coqueit \xA0- Revolution /
+10 - Nicolas Benedetti - Meraki / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"22",descargas:"54.2K",fecha:"2024-03-09",link:"https://mcdn.podbean.com/mf/download/scisf4/670-HernanCattaneo-2024-03-09.mp3",tracklist:`Coqueit \xA0- Revolution /
 After Burn - Golden Ticket /
 David Calo - Death Interface /
 E A N P - Systems /
@@ -10350,7 +10367,7 @@ Evolution, Jayn Hanna - Walking On Fire - (Luca Abayan Unofficial \xA0Remix) /`}
 6 - Carla Cimino & Luciano Scheffer - Zephyr /\xA0
 7 - Franco Camiolo & Yonsh - Gewissen /\xA0
 8 - Nila - Aurora Ascension /\xA0
-9 - Around Us - I Got This (Lemon8 Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"18",descargas:"51.3K",fecha:"2024-05-18",link:"https://mcdn.podbean.com/mf/download/j55sb6zsg73v3abu/680-HernanCattaneo-2024-05-18.mp3",tracklist:`RIGOONI - Guimel /
+9 - Around Us - I Got This (Lemon8 Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"19",descargas:"51.3K",fecha:"2024-05-18",link:"https://mcdn.podbean.com/mf/download/j55sb6zsg73v3abu/680-HernanCattaneo-2024-05-18.mp3",tracklist:`RIGOONI - Guimel /
 Peces Raros - No Van a Parar (Juan Sapia Edit) /
 thebassmonkey - Enceladus (Nomad in the Dark Remix) /
 Nahue Sintes, Ve\u0161c\u030Ca - Oblivion (Ft. JOSEFINA) /
@@ -10421,7 +10438,7 @@ Chris Cargo - Coyote (Luis Damora Remix) /`},{episodio:"685",titulo:"Resident / 
 7 - Agustin Pietrocola & Andr\xE9s Moris - The Key /\xA0
 8 - Gowzer - Vibrance /\xA0
 9 - PAUL (AR) - Rise (DJ Ruby Remix) /\xA0
-10 - Franco Armellini - Eastrail (Sebastian Busto Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"15",descargas:"44.8K",fecha:"2024-06-22",link:"https://mcdn.podbean.com/mf/download/mbwtksp32x2q8upp/685-HernanCattaneo-2024-06-22.mp3",tracklist:`Kalima - Dune /
+10 - Franco Armellini - Eastrail (Sebastian Busto Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"15",descargas:"44.9K",fecha:"2024-06-22",link:"https://mcdn.podbean.com/mf/download/mbwtksp32x2q8upp/685-HernanCattaneo-2024-06-22.mp3",tracklist:`Kalima - Dune /
 Kostya Outta - Awakening /
 Kalima - Talisman /
 Cedren & Manu - l, Influence /
@@ -10455,7 +10472,7 @@ Alan Cerra - Drive /`},{episodio:"687",titulo:"Resident / Episode 687 / Jul 06 2
 7 - John Cosani - I DID /\xA0
 8 - Hans Zimmer - Paul's Dream (Christopher Erre Edit) /\xA0
 9 - Hobin Rude - Message Me When You Get Home /\xA0
-10 - Paradorks - The Last Time (Hassan Unofficial Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"26",descargas:"47.9K",fecha:"2024-07-06",link:"https://mcdn.podbean.com/mf/download/jk9ryqj9cscg8xnm/687-HernanCattaneo-2024-07-06.mp3",tracklist:`S\xE9bastien L\xE9ger - Omira /
+10 - Paradorks - The Last Time (Hassan Unofficial Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"26",descargas:"48K",fecha:"2024-07-06",link:"https://mcdn.podbean.com/mf/download/jk9ryqj9cscg8xnm/687-HernanCattaneo-2024-07-06.mp3",tracklist:`S\xE9bastien L\xE9ger - Omira /
 Forty Cats - Ground (The Wash Remix) /
 ELECTRONIC - Getting Away With It ( PAUL (AR))
 Sonic Union - Running To You /
@@ -10540,7 +10557,7 @@ Zstimer - So Good (Nila Remix) If You Wait /`},{episodio:"692",titulo:"Resident 
 7 - Federico Monachesi, Nicolas Viana - Dioptase /\xA0
 8 - Because Of Art - Real High /\xA0
 9 - Mike Griego - Deaf (Kostya Outta Remix) /\xA0
-10 - D-Nox & Beckers feat Gai Barone \xA0- Acid / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"9",descargas:"35.7K",fecha:"2024-08-10",link:"https://mcdn.podbean.com/mf/download/a2bdtx9mz9itammz/692-HernanCattaneo-2024-08-10.mp3",tracklist:`Stereo Underground - Wanderlust /
+10 - D-Nox & Beckers feat Gai Barone \xA0- Acid / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"9",descargas:"35.8K",fecha:"2024-08-10",link:"https://mcdn.podbean.com/mf/download/a2bdtx9mz9itammz/692-HernanCattaneo-2024-08-10.mp3",tracklist:`Stereo Underground - Wanderlust /
 Dave Seaman - Nightfalls (PAUL (AR)) /
 Kostya Outta & Kamilo Sanclemente - Starlight (The Wash Remix) /
 Valen Gonzalez, Alain Pauwels - Un Dios Aparte /
@@ -11019,7 +11036,7 @@ DJ Ruby - Goldrake /`},{episodio:"727",titulo:"Resident / Episode 727 / Apr 12 2
 7 - Shayan Pasha, Redspace - Pantheon /\xA0
 8 - Tiefstone - Mirage /\xA0
 9 - Glenn Morrison - TR6 /\xA0
-10 - Paul Loraine - Minor Major (DCLVIII OFC Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"11",descargas:"29.6K",fecha:"2025-04-12",link:"https://mcdn.podbean.com/mf/download/w4aag69rftm7ke3j/727-HernanCattaneo-2025-04-12.mp3",tracklist:`Solis [US] - Every Single Moment /
+10 - Paul Loraine - Minor Major (DCLVIII OFC Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"11",descargas:"29.7K",fecha:"2025-04-12",link:"https://mcdn.podbean.com/mf/download/w4aag69rftm7ke3j/727-HernanCattaneo-2025-04-12.mp3",tracklist:`Solis [US] - Every Single Moment /
 RUBIA - Breeze /
 Boraa - Fear Of The Unknown /
 Ciro Riveiro - Malika /
@@ -11138,7 +11155,7 @@ Gunnar, Saww - Just Strangers /`},{episodio:"736",titulo:"Resident / Episode 736
 7 - Gai Barone - Fractals (Nicolas Viana Remix) /\xA0
 8 - Gorkiz - Visions of Beyond /\xA0
 9 - Tantum - Unblur /\xA0
-10 - Cass (UK) - Gothamania (Hernan Cattaneo & Mercurio Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"22",descargas:"34.1K",fecha:"2025-06-14",link:"https://mcdn.podbean.com/mf/download/tigqprjysxmukuzr/736-HernanCattaneo-2025-06-14.mp3",tracklist:`SHAZZE, Floyo, Jo Cruz - Midnight Drip /
+10 - Cass (UK) - Gothamania (Hernan Cattaneo & Mercurio Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"22",descargas:"34.2K",fecha:"2025-06-14",link:"https://mcdn.podbean.com/mf/download/tigqprjysxmukuzr/736-HernanCattaneo-2025-06-14.mp3",tracklist:`SHAZZE, Floyo, Jo Cruz - Midnight Drip /
 Abuk, Fabricio Mosoni - Diamond Dust /
 George X - Sunday's Memory /
 Blake.08 - The Change Of Love /
@@ -11410,7 +11427,7 @@ NeoClassic & Masaaki - Serotonin /`},{episodio:"756",titulo:"Resident / Episode 
 7 - Maze 28 - Feeling Blue /\xA0
 8 - Sound Fusion - Harbour /\xA0
 9 - Gorkiz - Bring Me Your Fire (Vocal Mix) /\xA0
-10 - PAAX (Tulum) - Who Das (Hernan Cattaneo & Marcelo Vasami Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"17",descargas:"34.4K",fecha:"2025-11-01",link:"https://mcdn.podbean.com/mf/download/5f6gxhew4vuz7c8c/756-HernanCattaneo-2025-11-01.mp3",tracklist:`Elliot Moriarty - Frequencies /
+10 - PAAX (Tulum) - Who Das (Hernan Cattaneo & Marcelo Vasami Remix) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"17",descargas:"34.5K",fecha:"2025-11-01",link:"https://mcdn.podbean.com/mf/download/5f6gxhew4vuz7c8c/756-HernanCattaneo-2025-11-01.mp3",tracklist:`Elliot Moriarty - Frequencies /
 Yan Niklas & J Doppler - Pineal Connection /
 Rich Curtis - \xA0Don't Throw That Away, I'll Eat It /
 Tomas Garcia - Snow Desert /
@@ -11512,7 +11529,7 @@ Pete Philips - Oceans (ELIF Remix) /`},{episodio:"765",titulo:"Resident / Episod
 7 - Rolasoul - Venus /\xA0
 8 - Hector Cortes & Fran Bux - Butterfly effect /\xA0
 9 - Tiefstone , Camila (Ar) - Throne /\xA0
-10 - Quivver - Shadows Dancing / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"16",descargas:"31.2K",fecha:"2026-01-24",link:"https://mcdn.podbean.com/mf/download/9p56j6sbuhs5np6p/768-HernanCattaneo-2026-01-24.mp3",tracklist:`Rivvo - Celestial Drift (Matt Oliver, Teclas Remix) /
+10 - Quivver - Shadows Dancing / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"16",descargas:"31.3K",fecha:"2026-01-24",link:"https://mcdn.podbean.com/mf/download/9p56j6sbuhs5np6p/768-HernanCattaneo-2026-01-24.mp3",tracklist:`Rivvo - Celestial Drift (Matt Oliver, Teclas Remix) /
 Luis Damora - Illuminate /
 Hobin Rude - First Breath /
 Rockka - Subconscious (DJ Ruby Remix) /
@@ -11529,7 +11546,7 @@ Tiefstone , Camila (Ar) - Throne /`},{episodio:"769",titulo:"Resident / Episode 
 7 - Samuel - Pulse (Casnik Remix) /\xA0
 8 - HAFT - Traverse /\xA0
 9 - Astronomy - Enclips /\xA0
-10 - Antrim - Shades Of Reverie / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"12",descargas:"31.5K",fecha:"2026-01-31",link:"https://mcdn.podbean.com/mf/download/3fdi82d8zemkvu2v/769-HernanCattaneo-2026-01-31.mp3",tracklist:`Gaston Perez - Angelic voice /
+10 - Antrim - Shades Of Reverie / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"12",descargas:"31.6K",fecha:"2026-01-31",link:"https://mcdn.podbean.com/mf/download/3fdi82d8zemkvu2v/769-HernanCattaneo-2026-01-31.mp3",tracklist:`Gaston Perez - Angelic voice /
 Gaston Perez - Time tunnel /
 Uccelli - The soul flows /
 Daniel Camarillo - Midnight Sun (Cipriani e Hans Gerd Remix) /
@@ -11580,7 +11597,7 @@ Juan Pablo Torrez & Kamilo Sanclemente - Sedna`},{episodio:"772",titulo:"Residen
 7 - Juan Deminicis - BG
 8 - Butch - When I Was Young
 9 - Shai T, Sahar Z - Rebirth
-10 - Nick Warren Run For Cover Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"15",descargas:"23.8K",fecha:"2026-02-21",link:"https://mcdn.podbean.com/mf/download/rcjsh7vtmjgiqtqg/772-HernanCattaneo-2026-02-21.mp3",tracklist:`Juan Yarin - Look Around
+10 - Nick Warren Run For Cover Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"15",descargas:"23.9K",fecha:"2026-02-21",link:"https://mcdn.podbean.com/mf/download/rcjsh7vtmjgiqtqg/772-HernanCattaneo-2026-02-21.mp3",tracklist:`Juan Yarin - Look Around
 Kris Dur, AOVA - Inner Phase (Original Mix)
 Miro - Paradise - Quivver Remix
 Cream - Gaute (Matias Chilano Remix)
@@ -11597,7 +11614,7 @@ Shai T, Sahar Z - Rebirth`},{episodio:"762",titulo:"Resident / Episode 762 / Dec
 7 - Dublew & STEREOMUNK - Goliath (Matthew Sona Remix) /\xA0
 8 - Randall Jones, Nick Stoynoff - Panama Red /\xA0
 9 - Trancesetters - The Search (Analog Sense Edit) /\xA0
-10 - Frankyeffe, Seismal D, Njira - Fading Out (Sofia Deren, Franco Laino, Nantiel Bootleg) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"12",descargas:"33.2K",fecha:"2025-12-13",link:"https://mcdn.podbean.com/mf/download/hiz899qk43s8gpxc/762-HernanCattaneo-2025-12-13.mp3",tracklist:`Death on the Balcony - Quiet Storm (Martin Fredes & Matthew Sona Remix) /
+10 - Frankyeffe, Seismal D, Njira - Fading Out (Sofia Deren, Franco Laino, Nantiel Bootleg) / Download episode on MP3 (Right click, save link as...) Help me support NGO Alegr\xEDa Intensiva, Hospital Clown, in Argentina. Donate now by clicking here!!! Donar desde Argentina haciendo click aqu\xED!!!`,likes:"13",descargas:"33.2K",fecha:"2025-12-13",link:"https://mcdn.podbean.com/mf/download/hiz899qk43s8gpxc/762-HernanCattaneo-2025-12-13.mp3",tracklist:`Death on the Balcony - Quiet Storm (Martin Fredes & Matthew Sona Remix) /
 Kasey Taylor & Gai Barone - Light Deliberations /
 Paula OS - The Shame (Hyunji-A Remix) /
 Hobin Rude - Beyond The Empty Air /
