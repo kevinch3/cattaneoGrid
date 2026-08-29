@@ -1,5 +1,5 @@
 // app/src/app/components/episode-player/episode-player.component.ts
-import { Component, ElementRef, ViewChild, inject } from '@angular/core'
+import { Component, ElementRef, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { PlayerService } from '../../services/player/player.service'
 import { PlayableContent, PlayerState } from '../../models/playable.model'
@@ -11,6 +11,7 @@ import { DownloadService } from '../../services/download/download.service'
   standalone: true,
   imports: [],
   templateUrl: './episode-player.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './episode-player.component.scss'
 })
 export class EpisodePlayerComponent {

@@ -1,6 +1,6 @@
-last 2 Chrome versions
-last 1 Firefox version
-last 2 Edge versions
-last 2 Safari versions
-ios_saf >= 14
+Chrome >= 119
+Firefox >= 119
+Edge >= 119
+Safari >= 17
+ios_saf >= 17
 Firefox ESR
