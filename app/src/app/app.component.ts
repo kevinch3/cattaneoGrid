@@ -1,5 +1,5 @@
 // app/src/app/app.component.ts
-import { Component, inject } from '@angular/core'
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { HeaderComponent } from './components/header/header.component'
 import { FooterComponent } from './components/footer/footer.component'
@@ -11,6 +11,7 @@ import { ThemeService } from './services/theme/theme.service'
   standalone: true,
   imports: [RouterOutlet, HeaderComponent, FooterComponent, EpisodePlayerComponent],
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.component.scss'
 })
 export class AppComponent {

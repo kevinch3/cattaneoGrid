@@ -1,11 +1,16 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import * as xml2js from 'xml2js';
+import { XMLParser } from 'fast-xml-parser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class XmlParserService {
+  // Mirrors the previous xml2js({ explicitArray: false }) shape: repeated child
+  // elements become arrays, single occurrences stay plain objects, and element
+  // attributes (e.g. <enclosure url="..."/>) are kept rather than dropped.
+  private readonly parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_' });
+
   constructor(
     private http: HttpClient
   ) {}
@@ -16,13 +21,11 @@ export class XmlParserService {
 
   parse(xmlString: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      xml2js.parseString(xmlString, { explicitArray: false }, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
+      try {
+        resolve(this.parser.parse(xmlString));
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 }
