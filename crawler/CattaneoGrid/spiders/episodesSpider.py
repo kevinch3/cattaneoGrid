@@ -32,7 +32,7 @@ class BasePodcastSpider(scrapy.Spider):
         self.existing_episodes: set[str] = set()  # episode IDs already in db
         self.gap_episodes: set[str] = set()       # missing numeric IDs to fill
 
-    def start_requests(self):
+    async def start(self):
         if self.resume_mode:
             self._load_existing_and_gaps()
 

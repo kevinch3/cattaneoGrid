@@ -28,7 +28,10 @@ jobs:
 
       - name: Run crawler
         working-directory: crawler
-        run: scrapy crawl podcastspider
+        run: |
+          scrapy crawl podcastspider 2>&1 | tee crawl.log
+          # A crawl that sends no requests still exits 0; fail loudly instead.
+          grep -q "downloader/request_count" crawl.log || { echo "::error::Crawler issued no requests"; exit 1; }
 
       - name: Commit updated db.json
         id: commit
