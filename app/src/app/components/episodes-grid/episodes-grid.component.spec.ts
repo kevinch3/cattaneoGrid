@@ -35,6 +35,17 @@ describe('EpisodesGridComponent', () => {
     expect(component.formatCount('5')).toBe('5');
   });
 
+  it('does not count part headers as tracks', () => {
+    expect(component.trackCount('Part 1\nA - B\nC - D\n\nPart 2\nE - F')).toBe(3);
+  });
+
+  it('strips site boilerplate from episode notes', () => {
+    expect(component.episodeNotes(
+      'Recorded Live at Woodstock69 - July 2022 Download episode on MP3 (Right click, save link as...) Help me support NGO'
+    )).toBe('Recorded Live at Woodstock69 - July 2022');
+    expect(component.episodeNotes(null)).toBe('');
+  });
+
   it('passes legacy and empty counts through', () => {
     expect(component.formatCount('24.6K')).toBe('24.6K');
     expect(component.formatCount(null)).toBe('');

@@ -11,6 +11,7 @@ Usage (from crawler/ with venv active):
 
 import argparse
 import json
+import os
 import re
 import string
 import sys
@@ -23,8 +24,8 @@ from pathlib import Path
 
 # Make the CattaneoGrid package importable when run from crawler/
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-from CattaneoGrid.parsing import extract_date, extract_episode, html_to_text
-from CattaneoGrid.tracklist_extractor import extract_tracklist
+from CattaneoGrid.parsing import extract_date, extract_episode, html_to_lines, html_to_text
+from CattaneoGrid.tracklist_extractor import extract_tracklist, tracklist_issue
 
 DB_PATH = Path(__file__).parent.parent.parent.parent / "data" / "db.json"
 SITE = "https://podcast.hernancattaneo.com"
@@ -81,8 +82,11 @@ def fetch_all_episodes():
 
 
 def to_record(ep):
+    """Return (db record, line-preserving source text the tracklist was extracted from)."""
     title = ep["title"]
-    descripcion = html_to_text(ep.get("previewContent") or "") or None
+    html = ep.get("previewContent") or ""
+    descripcion = html_to_text(html) or None
+    source = html_to_lines(html)
     fecha = extract_date(title)
     if not fecha and ep.get("publishTimestamp"):
         fecha = datetime.fromtimestamp(ep["publishTimestamp"], ART).strftime("%Y-%m-%d")
@@ -90,7 +94,7 @@ def to_record(ep):
     if link:
         # Same file; db.json has always stored the download variant
         link = link.replace("/mf/web/", "/mf/download/")
-    return {
+    record = {
         "episodio": extract_episode(title),
         "titulo": title,
         "likes": str(ep["likedCount"]),
@@ -98,8 +102,9 @@ def to_record(ep):
         "fecha": fecha,
         "descripcion": descripcion,
         "link": link,
-        "tracklist": extract_tracklist(descripcion),
+        "tracklist": extract_tracklist(source),
     }
+    return record, source
 
 
 def next_letter_id(used):
@@ -114,10 +119,12 @@ def next_letter_id(used):
     return None
 
 
-def merge(existing, api_records):
-    """Return (new records first + existing records in their original order, new ids, stats-changed count).
+def merge(existing, api_records, retrack=False):
+    """Return (new records first + existing records in their original order, new ids,
+    stats-changed count, retracked count).
 
     Existing records keep their position so the committed diff only shows real changes.
+    With retrack, existing tracklists are replaced by a fresh extraction.
     """
     by_title = {r["titulo"]: i for i, r in enumerate(existing) if r.get("titulo")}
     by_id = {str(r["episodio"]): i for i, r in enumerate(existing) if r.get("episodio") is not None}
@@ -126,7 +133,7 @@ def merge(existing, api_records):
     api_titles = {rec["titulo"] for rec in api_records}
 
     updated = list(existing)
-    new_records, seen, changed = [], set(), 0
+    new_records, seen, changed, retracked = [], set(), 0, 0
     for rec in api_records:
         idx = by_title.get(rec["titulo"])
         if idx is None and rec["episodio"] is not None:
@@ -144,6 +151,9 @@ def merge(existing, api_records):
             updated[idx] = {**old, "likes": rec["likes"], "descargas": rec["descargas"]}
             if not old.get("link"):
                 updated[idx]["link"] = rec["link"]
+            if retrack and old.get("tracklist") != rec["tracklist"]:
+                updated[idx]["tracklist"] = rec["tracklist"]
+                retracked += 1
             continue
 
         if rec["episodio"] is None or rec["episodio"] in by_id:
@@ -159,13 +169,42 @@ def merge(existing, api_records):
     for i, r in enumerate(existing):
         if i not in seen:
             print(f"Warning: episode {r.get('episodio')!r} no longer listed by the site; keeping it", file=sys.stderr)
-    return new_records + updated, [r["episodio"] for r in new_records], changed
+    return new_records + updated, [r["episodio"] for r in new_records], changed, retracked
+
+
+def report_tracklist_issues(records, sources, added):
+    """Print tracklist issues; return episode ids of new episodes with issues.
+
+    Issues on new episodes are surfaced to CI (GITHUB_OUTPUT) so the run turns red;
+    issues on older episodes are only listed.
+    """
+    added = set(added)
+    new_issues = []
+    for rec in records:
+        issue = tracklist_issue(sources.get(rec["titulo"]), rec.get("tracklist"))
+        if not issue:
+            continue
+        is_new = rec["episodio"] in added
+        print(f"{'Error' if is_new else 'Warning'}: tracklist of episode {rec['episodio']}: {issue}", file=sys.stderr)
+        if is_new:
+            new_issues.append(rec["episodio"])
+
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if github_output:
+        with open(github_output, "a", encoding="utf-8") as f:
+            f.write(f"tracklist_issues={' '.join(new_issues)}\n")
+    return new_issues
 
 
 def main():
     parser = argparse.ArgumentParser(description="Sync db.json from the podcast site's JSON API")
     parser.add_argument("--db", default=str(DB_PATH), help=f"Path to db.json (default: {DB_PATH})")
     parser.add_argument("--dry-run", action="store_true", help="Fetch and report, but don't write")
+    parser.add_argument(
+        "--retrack",
+        action="store_true",
+        help="Re-extract tracklists of existing episodes too (after extractor fixes)",
+    )
     args = parser.parse_args()
 
     db_path = Path(args.db)
@@ -173,12 +212,16 @@ def main():
 
     started = time.monotonic()
     episodes, pages = fetch_all_episodes()
-    merged, added, changed = merge(existing, [to_record(ep) for ep in episodes])
+    pairs = [to_record(ep) for ep in episodes]
+    sources = {rec["titulo"]: source for rec, source in pairs}
+    merged, added, changed, retracked = merge(existing, [rec for rec, _ in pairs], args.retrack)
 
     print(
         f"Fetched {len(episodes)} episodes from {pages} pages in {time.monotonic() - started:.1f}s; "
-        f"{len(added)} new {added}, stats changed on {changed}, total {len(merged)}"
+        f"{len(added)} new {added}, stats changed on {changed}, tracklists re-extracted {retracked}, "
+        f"total {len(merged)}"
     )
+    report_tracklist_issues(merged, sources, added)
     if args.dry_run:
         return
 

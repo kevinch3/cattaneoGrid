@@ -55,7 +55,11 @@
             <span class="track-count">{{ trackCount(episode.tracklist) }} tracks</span>
           }
         </div>
-        <div [innerHTML]="tracklistWithBreaks(episode.tracklist)" class="tracklist"></div>
+        @if (episode.tracklist) {
+          <div [innerHTML]="tracklistWithBreaks(episode.tracklist)" class="tracklist"></div>
+        } @else {
+          <div class="tracklist notes">{{ episodeNotes(episode.descripcion) }}</div>
+        }
       </div>
     }
   }

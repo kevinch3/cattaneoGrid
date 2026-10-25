@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      tracklist_issues: ${{ steps.sync.outputs.tracklist_issues }}
 
     steps:
       - name: Check out repository
@@ -26,7 +28,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-sync.txt
 
+      - name: Test tracklist extraction and merge
+        working-directory: crawler
+        run: python -m pytest -q tests
+
       - name: Sync db.json from site API
+        id: sync
         working-directory: crawler
         run: python scripts/data/sync_db.py
 
@@ -84,3 +91,15 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           npx angular-cli-ghpages --dir=dist/cattaneo-grid-app/browser --branch=gh-pages
+
+  # New episodes are published either way; a tracklist that looks broken then
+  # turns the run red so the extractor gets fixed the same week.
+  tracklist-check:
+    needs: [scrape, deploy]
+    if: needs.scrape.outputs.tracklist_issues != ''
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail on new episodes with broken tracklists
+        run: |
+          echo "::error::Tracklist extraction looks broken for new episode(s): ${{ needs.scrape.outputs.tracklist_issues }} (see the sync step log)"
+          exit 1
