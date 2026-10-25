@@ -36,6 +36,24 @@ def extract_episode(title):
     return None
 
 
+_BLOCK_TAGS = ["p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6"]
+
+
+def html_to_lines(html):
+    """Plain text with one line per <br>/block element, for tracklist extraction.
+
+    Unlike html_to_text, line structure survives: older episodes put each
+    track in its own <div>, which html_to_text flattens into one line.
+    """
+    soup = BeautifulSoup(html or "", "html.parser")
+    for br in soup.find_all("br"):
+        br.replace_with("\n")
+    for block in soup.find_all(_BLOCK_TAGS):
+        block.insert_after("\n")
+    lines = (re.sub(r"\s+", " ", ln).strip() for ln in soup.get_text().splitlines())
+    return "\n".join(ln for ln in lines if ln)
+
+
 def html_to_text(html, return_html=False):
     if return_html:
         return html

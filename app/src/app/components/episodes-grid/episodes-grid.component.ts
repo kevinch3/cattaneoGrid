@@ -9,6 +9,9 @@ import { ThemeService } from '../../services/theme/theme.service'
 import { DownloadService } from '../../services/download/download.service'
 
 const compactNumber = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
+const PART_HEADER = /^Part\s*\d+$/i
+// Keep in sync with _BOILERPLATE in crawler/CattaneoGrid/tracklist_extractor.py
+const BOILERPLATE = /Download episode on MP3|Right click, save link|Help me support|Donate now|Donar desde/i
 
 @Component({
   selector: 'app-episodes-grid',
@@ -97,7 +100,14 @@ export class EpisodesGridComponent implements OnInit {
 
   public trackCount(tracklist: string | null | undefined): number {
     if (!tracklist) return 0
-    return tracklist.split('\n').filter(l => l.trim()).length
+    return tracklist.split('\n').filter(l => l.trim() && !PART_HEADER.test(l.trim())).length
+  }
+
+  // Description of episodes without a tracklist (live sets), minus the site's
+  // download/donation boilerplate
+  public episodeNotes(descripcion: string | null | undefined): string {
+    if (!descripcion) return ''
+    return descripcion.split(BOILERPLATE)[0].trim()
   }
 
   // db.json stores exact counts ("24599"); show them compact ("24.6K").

@@ -122,6 +122,10 @@
     font-size: 13px;
     line-height: 1.7;
     font-family: var(--font-ui, 'Libre Franklin', sans-serif);
+
+    &.notes {
+      font-style: italic;
+    }
   }
 }
 

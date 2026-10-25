@@ -53,7 +53,8 @@ export class EpisodesService {
     const fechaTimestamp = this.parseDateField(episode.fecha);
     const fechasubidaTimestamp = this.parseDateField(episode.fechasubida);
     const episodioNumber = this.parseIntegerField(episode.episodio);
-    const tracklist = episode.tracklist ?? episode.descripcion ?? '';
+    // No fallback to descripcion: it would render site boilerplate as a "track"
+    const tracklist = episode.tracklist ?? '';
 
     return {
       ...episode,
