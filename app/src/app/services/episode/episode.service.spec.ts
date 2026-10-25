@@ -15,4 +15,13 @@ describe('EpisodesService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('parses exact digit download counts as numbers', () => {
+    service.fetchEpisodes().subscribe(episodes => {
+      const exact = episodes.filter(e => /^\d+$/.test(e.descargas ?? ''));
+      for (const episode of exact) {
+        expect(episode._descargas.number).toBe(Number(episode.descargas));
+      }
+    });
+  });
 });

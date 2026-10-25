@@ -2,7 +2,10 @@ SHELL := /bin/bash
 
 SCRAPY := .venv/bin/scrapy
 
-.PHONY: crawl crawl-full crawl-asc merge-db install extract-tracklists
+.PHONY: sync crawl crawl-full crawl-asc merge-db install extract-tracklists
+
+sync:
+	.venv/bin/python scripts/data/sync_db.py
 
 install:
 	python3 -m venv --clear .venv

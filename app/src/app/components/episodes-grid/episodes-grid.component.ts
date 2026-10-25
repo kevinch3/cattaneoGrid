@@ -8,6 +8,8 @@ import { SortService } from '../../services/sort/sort.service'
 import { ThemeService } from '../../services/theme/theme.service'
 import { DownloadService } from '../../services/download/download.service'
 
+const compactNumber = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
+
 @Component({
   selector: 'app-episodes-grid',
   standalone: true,
@@ -98,6 +100,13 @@ export class EpisodesGridComponent implements OnInit {
     return tracklist.split('\n').filter(l => l.trim()).length
   }
 
+  // db.json stores exact counts ("24599"); show them compact ("24.6K").
+  // Non-numeric values (legacy "24.6K" strings) pass through unchanged.
+  public formatCount(value: string | null | undefined): string {
+    if (!value || !/^\d+$/.test(value)) return value ?? ''
+    return compactNumber.format(Number(value))
+  }
+
   private sortEpisodes(field: string): void {
     if (!this.episodes.length) return
     this.episodes = [...this.episodes].sort((a, b) => {
@@ -120,6 +129,8 @@ export class EpisodesGridComponent implements OnInit {
       if (isNaN(d.getTime())) return ext.value
       return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' })
     }
+
+    if (field === '_likes' || field === '_descargas') return this.formatCount(ext.value)
 
     return ext.value
   }
