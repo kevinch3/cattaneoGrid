@@ -24,14 +24,11 @@ jobs:
         working-directory: crawler
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements-sync.txt
 
-      - name: Run crawler
+      - name: Sync db.json from site API
         working-directory: crawler
-        run: |
-          scrapy crawl podcastspider 2>&1 | tee crawl.log
-          # A crawl that sends no requests still exits 0; fail loudly instead.
-          grep -q "downloader/request_count" crawl.log || { echo "::error::Crawler issued no requests"; exit 1; }
+        run: python scripts/data/sync_db.py
 
       - name: Commit updated db.json
         id: commit
